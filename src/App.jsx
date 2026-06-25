@@ -974,9 +974,18 @@ export default function App() {
         </div>
 
         <div className="nav-right" style={{ gap: '16px' }}>
-          <button className="btn-new-campaign" onClick={() => setIsNewCampaignOpen(true)}>
-            <Plus size={16} />
-            <span>New Campaign</span>
+          <button 
+            className="btn-apps-grid" 
+            onClick={() => setIsNewCampaignOpen(true)}
+            title="DynaMo Platform"
+            aria-label="DynaMo Platform"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="3" width="7" height="7"/>
+              <rect x="14" y="3" width="7" height="7"/>
+              <rect x="14" y="14" width="7" height="7"/>
+              <rect x="3" y="14" width="7" height="7"/>
+            </svg>
           </button>
 
           {/* Notification bell dropdown wrapper */}
@@ -1209,7 +1218,7 @@ export default function App() {
                     <div key={item.id} className={`line-item-row ${item.state === 'active' ? `active-row active-${cond}` : ''}`}>
                       <div className="line-item-left" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                         <ImageThumbnail creativeName={item.creative_name} conditionTrigger={item.condition_trigger} />
-                        <span className="creative-name" style={{ fontSize: '14px', color: '#374151', fontWeight: 400 }}>{item.creative_name}</span>
+                        <span className="creative-name">{item.creative_name}</span>
                       </div>
                       <span className={`status-pill ${item.state}`}>
                         {item.state}

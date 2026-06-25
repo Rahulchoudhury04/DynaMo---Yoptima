@@ -44,6 +44,8 @@
   --campaign-pill-bg: #21262D;
   --campaign-pill-border: #30363D;
   --campaign-pill-text: #F0F6FC;
+  --creative-text: #E5E7EB;
+  --navbar-btn-border: #30363D;
 
   --color-hot: #F59E0B;
   --color-rainy-day: #3B82F6;
@@ -102,6 +104,8 @@ html[data-theme="light"] {
   --campaign-pill-bg: #FFFFFF;
   --campaign-pill-border: #D0D7DE;
   --campaign-pill-text: #24292F;
+  --creative-text: #24292F;
+  --navbar-btn-border: #D0D7DE;
 }
 
 * {
@@ -240,23 +244,23 @@ a {
   position: relative;
 }
 
-.btn-new-campaign {
-  border: 1px solid #2D2D8F;
-  color: #2D2D8F;
+.btn-apps-grid {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--navbar-btn-border);
   background-color: transparent;
-  padding: 8px 16px;
-  border-radius: 8px;
-  font-size: 13px;
-  font-weight: 600;
+  color: var(--text-muted);
   display: flex;
   align-items: center;
-  gap: 6px;
+  justify-content: center;
+  cursor: pointer;
   transition: var(--transition-smooth);
 }
 
-.btn-new-campaign:hover {
-  background-color: #2D2D8F;
-  color: #FFFFFF;
+.btn-apps-grid:hover {
+  background-color: var(--line-item-row-hover);
+  color: var(--text-main);
 }
 
 .notification-container {
@@ -269,6 +273,7 @@ a {
   width: 36px;
   height: 36px;
   border-radius: 50%;
+  border: 1px solid var(--navbar-btn-border);
   transition: var(--transition-smooth);
 }
 
@@ -910,7 +915,7 @@ a {
 
 .creative-name {
   font-size: 14px;
-  color: var(--text-main);
+  color: var(--creative-text);
   font-weight: 400;
 }
 
