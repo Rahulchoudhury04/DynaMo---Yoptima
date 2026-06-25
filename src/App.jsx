@@ -29,7 +29,8 @@ import {
   HelpCircle,
   Cloud,
   Info,
-  PlayCircle
+  PlayCircle,
+  Menu
 } from 'lucide-react';
 
 function getHeaderBgColor(condition, isDay) {
@@ -242,6 +243,7 @@ export default function App() {
   const [isNewCampaignOpen, setIsNewCampaignOpen] = useState(false);
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
+  const [isHamburgerOpen, setIsHamburgerOpen] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [isNotificationDropdownOpen, setIsNotificationDropdownOpen] = useState(false);
   const [showAllLogs, setShowAllLogs] = useState(false);
@@ -1021,9 +1023,9 @@ export default function App() {
             {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
           </button>
 
-          {/* User Button */}
+          {/* User Button — desktop only */}
           <button 
-            className="navbar-icon-btn" 
+            className="navbar-icon-btn hide-on-mobile" 
             onClick={(e) => { e.stopPropagation(); setIsUserDropdownOpen(!isUserDropdownOpen); }}
             title="User Profile"
             aria-label="User Profile"
@@ -1031,9 +1033,9 @@ export default function App() {
             <User size={20} />
           </button>
 
-          {/* User profile dropdown card */}
+          {/* User profile dropdown card — desktop only */}
           {isUserDropdownOpen && (
-            <div className="profile-dropdown" ref={dropdownRef}>
+            <div className="profile-dropdown hide-on-mobile" ref={dropdownRef}>
               <p style={{ fontSize: '12px', color: 'var(--text-muted)', margin: '0 0 10px 0', lineHeight: '1.4', textAlign: 'left' }}>
                 Anyone with the link can view this dashboard
               </p>
@@ -1042,6 +1044,16 @@ export default function App() {
               </button>
             </div>
           )}
+
+          {/* Hamburger Button — mobile only */}
+          <button
+            className="navbar-icon-btn show-on-mobile-only"
+            onClick={(e) => { e.stopPropagation(); setIsHamburgerOpen(true); }}
+            title="Menu"
+            aria-label="Open menu"
+          >
+            <Menu size={20} />
+          </button>
         </div>
       </nav>
 
@@ -1053,6 +1065,67 @@ export default function App() {
           <ChevronDown size={12} style={{ color: 'var(--navbar-icon-color)' }} />
         </div>
       </div>
+
+      {/* Mobile Hamburger Drawer */}
+      {isHamburgerOpen && (
+        <div className="mobile-drawer-overlay" onClick={() => setIsHamburgerOpen(false)}>
+          <div className="mobile-drawer" onClick={(e) => e.stopPropagation()}>
+            {/* Drawer handle */}
+            <div className="mobile-drawer-handle" />
+
+            {/* Close button */}
+            <button className="mobile-drawer-close" onClick={() => setIsHamburgerOpen(false)} aria-label="Close menu">
+              <X size={18} />
+            </button>
+
+            {/* Platform */}
+            <button
+              className="mobile-drawer-item"
+              onClick={() => { setIsHamburgerOpen(false); setIsNewCampaignOpen(true); }}
+            >
+              <div className="mobile-drawer-item-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="3" y="3" width="7" height="7"/>
+                  <rect x="14" y="3" width="7" height="7"/>
+                  <rect x="14" y="14" width="7" height="7"/>
+                  <rect x="3" y="14" width="7" height="7"/>
+                </svg>
+              </div>
+              <div className="mobile-drawer-item-text">
+                <span className="mobile-drawer-item-title">DynaMo Platform</span>
+                <span className="mobile-drawer-item-desc">Upcoming features &amp; roadmap</span>
+              </div>
+              <ChevronDown size={16} style={{ transform: 'rotate(-90deg)', color: 'var(--text-muted)' }} />
+            </button>
+
+            {/* How DynaMo Works */}
+            <button
+              className="mobile-drawer-item"
+              onClick={() => { setIsHamburgerOpen(false); setIsInfoModalOpen(true); }}
+            >
+              <div className="mobile-drawer-item-icon">
+                <Info size={20} />
+              </div>
+              <div className="mobile-drawer-item-text">
+                <span className="mobile-drawer-item-title">How DynaMo Works</span>
+                <span className="mobile-drawer-item-desc">System overview &amp; data sources</span>
+              </div>
+              <ChevronDown size={16} style={{ transform: 'rotate(-90deg)', color: 'var(--text-muted)' }} />
+            </button>
+
+            {/* Divider */}
+            <div className="mobile-drawer-divider" />
+
+            {/* Share Link */}
+            <div className="mobile-drawer-share">
+              <p className="mobile-drawer-share-label">Anyone with the link can view this dashboard</p>
+              <button className="btn-copy-link" onClick={() => { handleCopyLink(); setIsHamburgerOpen(false); }}>
+                Copy Link
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Main Content Area */}
       <main className="main-content">

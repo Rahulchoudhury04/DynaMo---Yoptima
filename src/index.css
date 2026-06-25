@@ -2322,6 +2322,156 @@ a {
   border-bottom: 1px solid var(--navbar-border);
 }
 
+/* Show only on mobile — hidden on desktop */
+.show-on-mobile-only {
+  display: none; /* hidden on desktop */
+}
+
+/* =====================================================
+   MOBILE HAMBURGER DRAWER
+   ===================================================== */
+.mobile-drawer-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.55);
+  z-index: 500;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  animation: overlayFadeIn 0.2s ease-out;
+}
+
+@keyframes overlayFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.mobile-drawer {
+  background-color: var(--bg-card);
+  border-top: 1px solid var(--border-light);
+  border-radius: 20px 20px 0 0;
+  padding: 12px 20px 36px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  position: relative;
+  animation: drawerSlideUp 0.28s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+@keyframes drawerSlideUp {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+
+.mobile-drawer-handle {
+  width: 36px;
+  height: 4px;
+  background-color: var(--border-light);
+  border-radius: 2px;
+  margin: 0 auto 16px auto;
+  flex-shrink: 0;
+}
+
+.mobile-drawer-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: var(--paused-pill-bg);
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.mobile-drawer-close:hover {
+  background-color: var(--line-item-row-hover);
+  color: var(--text-main);
+}
+
+.mobile-drawer-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 14px 12px;
+  border-radius: 12px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background-color 0.15s ease;
+  color: var(--text-main);
+}
+
+.mobile-drawer-item:hover,
+.mobile-drawer-item:active {
+  background-color: var(--line-item-row-hover);
+}
+
+.mobile-drawer-item-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background-color: var(--paused-pill-bg);
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: var(--transition-smooth);
+}
+
+.mobile-drawer-item:hover .mobile-drawer-item-icon {
+  background-color: var(--active-tab-bg);
+  color: #FFFFFF;
+}
+
+.mobile-drawer-item-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.mobile-drawer-item-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-main);
+  line-height: 1.2;
+}
+
+.mobile-drawer-item-desc {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.3;
+}
+
+.mobile-drawer-divider {
+  height: 1px;
+  background-color: var(--border-light);
+  margin: 10px 0;
+}
+
+.mobile-drawer-share {
+  padding: 4px 12px 0 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.mobile-drawer-share-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.4;
+  margin: 0;
+}
+
 /* =====================================================
    RESPONSIVE — MOBILE (max-width: 767px)
    ===================================================== */
@@ -2330,6 +2480,11 @@ a {
   /* Hide desktop-only elements */
   .hide-on-mobile {
     display: none !important;
+  }
+
+  /* Show mobile-only elements */
+  .show-on-mobile-only {
+    display: flex !important;
   }
 
   /* Show mobile campaign bar */
