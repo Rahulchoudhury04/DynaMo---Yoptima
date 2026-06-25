@@ -908,7 +908,7 @@ export default function App() {
         </div>
         
         <div className="premium-loading-footer">
-          Powered by Open-Meteo · Supabase
+          A YOptima Product
         </div>
       </div>
     );
