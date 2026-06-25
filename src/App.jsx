@@ -825,6 +825,11 @@ export default function App() {
   // showing only the row that activated the new creative, or new format status entries.
   const activeLogs = transitionLogs.filter(log => log.new_state === 'active');
 
+  // Filter activity logs by selected city tab
+  const filteredLogs = activeTab === 'All Cities'
+    ? activeLogs
+    : activeLogs.filter(log => log.city === activeTab);
+
   // Compute stat card metrics
   const activeLineItemsCount = lineItems.filter(item => item.state === 'active').length;
   const changesTodayCount = activeLogs.filter(log => {
@@ -1290,13 +1295,13 @@ export default function App() {
           </div>
           
           <div className="activity-list">
-            {activeLogs.length === 0 ? (
+            {filteredLogs.length === 0 ? (
               <div className="activity-empty-state">
                 <Clock size={16} className="empty-icon" />
                 <span>No activity yet — waiting for first weather cycle</span>
               </div>
             ) : (
-              (showAllLogs ? activeLogs : activeLogs.slice(0, 8)).map((log) => (
+              (showAllLogs ? filteredLogs : filteredLogs.slice(0, 8)).map((log) => (
                 <div 
                   key={log.id} 
                   className="activity-row"
@@ -1322,14 +1327,14 @@ export default function App() {
             )}
           </div>
 
-          {activeLogs.length > 0 && (
+          {filteredLogs.length > 0 && (
             <>
               <div className="activity-footer-divider"></div>
               <div className="activity-footer">
                 <span className="footer-text">
-                  Showing {Math.min(showAllLogs ? activeLogs.length : 8, activeLogs.length)} of {activeLogs.length} total events
+                  Showing {Math.min(showAllLogs ? filteredLogs.length : 8, filteredLogs.length)} of {filteredLogs.length} total events
                 </span>
-                {!showAllLogs && activeLogs.length > 8 && (
+                {!showAllLogs && filteredLogs.length > 8 && (
                   <button className="btn-load-more" onClick={() => setShowAllLogs(true)}>
                     Load More
                   </button>
