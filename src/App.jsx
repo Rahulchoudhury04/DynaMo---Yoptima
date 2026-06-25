@@ -247,6 +247,15 @@ export default function App() {
   const [isInitialized, setIsInitialized] = useState(false);
   const [supabaseError, setSupabaseError] = useState(false);
   const [apiErrorBanner, setApiErrorBanner] = useState(null);
+  const [loadingMsgIndex, setLoadingMsgIndex] = useState(0);
+
+  useEffect(() => {
+    if (isInitialized) return;
+    const interval = setInterval(() => {
+      setLoadingMsgIndex((prev) => (prev + 1) % 3);
+    }, 800);
+    return () => clearInterval(interval);
+  }, [isInitialized]);
   
   // Demo Mode state
   const [isDemoMode, setIsDemoMode] = useState(false);
@@ -847,13 +856,36 @@ export default function App() {
     }, 50);
   };
 
-  // Supabase error screen
+  // Supabase loading screen
   if (!isInitialized) {
+    const loadingMessages = [
+      "Fetching live weather across 4 cities...",
+      "Evaluating campaign conditions...",
+      "Loading your dashboard..."
+    ];
     return (
-      <div className="fullscreen-error-container">
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
-          <RefreshCw className="spinning" size={40} style={{ color: 'var(--primary-navy)' }} />
-          <p style={{ color: 'var(--text-muted)', fontWeight: 500 }}>Initializing DynaMo Control Plane...</p>
+      <div className="premium-loading-container">
+        <div className="premium-loading-content">
+          <div className="premium-loading-logo">
+            DynaMo
+            <span className="premium-loading-logo-icon">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M13 2L3 14H12L11 22L21 10H12L13 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </span>
+          </div>
+          
+          <div className="premium-loading-bar-bg">
+            <div className="premium-loading-bar-fill"></div>
+          </div>
+          
+          <div className="premium-loading-text">
+            {loadingMessages[loadingMsgIndex]}
+          </div>
+        </div>
+        
+        <div className="premium-loading-footer">
+          Powered by Open-Meteo · Supabase
         </div>
       </div>
     );
