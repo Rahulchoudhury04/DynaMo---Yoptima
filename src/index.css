@@ -1104,11 +1104,10 @@ a {
   color: var(--text-muted);
   font-style: italic;
   flex-shrink: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  white-space: normal;
   text-align: left !important;
   padding: 0 !important;
+  line-height: 1.4;
 }
 
 .activity-trigger-wrapper {
