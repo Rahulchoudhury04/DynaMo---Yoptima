@@ -1568,7 +1568,7 @@ export default function App() {
         </section>
 
         {/* Campaign Analytics Section */}
-        <section id="campaign-analytics" className="activity-section" style={{ marginTop: '24px' }}>
+        <section id="campaign-analytics" className="activity-section">
           <div className="activity-header" style={{ padding: '20px 24px 20px 24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', flexWrap: 'wrap', gap: '16px' }}>
               <h2 className="activity-title" style={{ margin: 0 }}>Campaign Analytics</h2>
