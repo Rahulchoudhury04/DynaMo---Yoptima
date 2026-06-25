@@ -1667,11 +1667,8 @@ export default function App() {
                           return <span style={{ color: 'var(--text-primary)' }}>{value} <span style={{ color: 'var(--text-muted)', marginLeft: '4px' }}>{data?.value} ({data?.percentage}%)</span></span>;
                         }}
                       />
-                      <text x="50%" y="41%" textAnchor="middle" dominantBaseline="middle" style={{ fontSize: '26px', fontWeight: 700, fill: 'var(--text-primary)' }}>
+                      <text x="50%" y="45%" textAnchor="middle" dominantBaseline="middle" style={{ fontSize: '32px', fontWeight: 700, fill: '#FFFFFF' }}>
                         {totalActivations}
-                      </text>
-                      <text x="50%" y="53%" textAnchor="middle" dominantBaseline="middle" style={{ fontSize: '12px', fill: 'var(--text-muted)', fontWeight: 500 }}>
-                        total activations
                       </text>
                     </PieChart>
                   </ResponsiveContainer>
