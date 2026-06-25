@@ -1,7 +1,7 @@
 // src/App.jsx
 import React, { useState, useEffect, useRef } from 'react';
 import { supabase } from './supabaseClient';
-import { seedLineItemsIfEmpty, triggerManualRefresh } from './services/weatherService';
+import { seedLineItemsIfEmpty, triggerManualRefresh, syncWeatherDirectly } from './services/weatherService';
 import { 
   GlassWater, 
   ChevronDown, 
@@ -247,10 +247,10 @@ export default function App() {
 
   // Fetch all necessary data from Supabase
   const fetchData = async () => {
-    if (isDemoMode) return;
+    if (isDemoMode) return null;
     if (!supabase) {
       setSupabaseError(true);
-      return;
+      return null;
     }
     try {
       // 1. Fetch line items
@@ -282,9 +282,9 @@ export default function App() {
           }
         }
       }
-      if (latestWeather && latestWeather.length > 0) {
-        setWeatherCache(latestWeather);
-      }
+      
+      // Always set weatherCache, even if empty, so the UI state is updated
+      setWeatherCache(latestWeather);
 
       // 3. Fetch transition logs (limit to 100 for "View All")
       const { data: logs, error: logsError } = await supabase
@@ -297,9 +297,11 @@ export default function App() {
       setTransitionLogs(logs || []);
 
       setSupabaseError(false);
+      return { latestWeather, items, logs };
     } catch (err) {
       console.error('Supabase connection/fetch error:', err);
       setSupabaseError(true);
+      throw err;
     }
   };
 
@@ -307,14 +309,40 @@ export default function App() {
   useEffect(() => {
     const initializeApp = async () => {
       if (!supabase) {
-        setSupabaseError(true);
-        setIsInitialized(true);
+        console.warn("Supabase not initialized, entering Demo Mode automatically.");
+        startDemoMode();
+        setApiErrorBanner("Supabase URL and Key missing. Running in Demo Mode (Mock data).");
         return;
       }
-      // Seed if table is empty, then load data
-      await seedLineItemsIfEmpty();
-      await fetchData();
-      setIsInitialized(true);
+      try {
+        // Seed if table is empty, then load data
+        await seedLineItemsIfEmpty();
+        const data = await fetchData();
+        
+        // If we don't have weather data yet, trigger a sync!
+        if (!data || !data.latestWeather || data.latestWeather.length === 0) {
+          console.log("No weather cache found, triggering initial sync...");
+          try {
+            await triggerManualRefresh();
+            await fetchData();
+          } catch (edgeErr) {
+            console.warn("Edge function failed on load, falling back to direct Open-Meteo sync:", edgeErr);
+            try {
+              await syncWeatherDirectly('system');
+              setApiErrorBanner("Edge Function is unavailable. Fell back to direct Open-Meteo sync.");
+            } catch (directErr) {
+              console.error("Direct sync failed as well:", directErr);
+              setApiErrorBanner("Weather sync failed. Edge Function and Open-Meteo both unavailable.");
+            }
+          }
+        }
+      } catch (err) {
+        console.error("Failed to initialize app from Supabase, entering Demo Mode:", err);
+        startDemoMode();
+        setApiErrorBanner("Database connection failed. Running in Demo Mode (Mock data).");
+      } finally {
+        setIsInitialized(true);
+      }
     };
 
     initializeApp();
@@ -528,8 +556,14 @@ export default function App() {
       if (isDemoMode) {
         await runDemoWeatherCycle('manual');
       } else {
-        await triggerManualRefresh();
-        await fetchData();
+        try {
+          await triggerManualRefresh();
+          await fetchData();
+        } catch (edgeError) {
+          console.warn('Edge function failed during manual refresh, falling back to direct Open-Meteo:', edgeError);
+          await syncWeatherDirectly('manual');
+          setApiErrorBanner('Edge Function is unavailable. Fell back to direct Open-Meteo sync.');
+        }
       }
     } catch (err) {
       console.error('Manual refresh failed:', err);
@@ -541,7 +575,7 @@ export default function App() {
       } else {
         lastFetchedTimestamp = 'unknown';
       }
-      setApiErrorBanner(`Weather data unavailable — showing last known state as of ${lastFetchedTimestamp}`);
+      setApiErrorBanner(`Weather data sync failed: ${err.message || 'unknown error'}. Showing last known state as of ${lastFetchedTimestamp}`);
     } finally {
       setIsRefreshing(false);
     }

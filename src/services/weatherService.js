@@ -73,3 +73,142 @@ export async function triggerManualRefresh() {
 
   return data;
 }
+
+/**
+ * Fetches weather directly from Open-Meteo API, updates Supabase weather_cache,
+ * evaluates line item states, updates line_items and inserts transition logs.
+ * Used as a fallback if the Edge Function is unavailable.
+ */
+export async function syncWeatherDirectly(triggeredBy = 'system') {
+  if (!supabase) {
+    throw new Error('Supabase client is not initialized.');
+  }
+
+  const cities = [
+    { name: 'Mumbai', lat: 19.07, lon: 72.87 },
+    { name: 'Delhi', lat: 28.61, lon: 77.20 },
+    { name: 'Bangalore', lat: 12.97, lon: 77.59 },
+    { name: 'Chennai', lat: 13.08, lon: 80.27 }
+  ];
+  const rainyCodes = [51, 53, 55, 61, 63, 65, 80, 81, 82, 95, 96, 99];
+
+  // 1. Fetch weather from Open-Meteo API
+  const lats = cities.map(c => c.lat).join(',');
+  const lons = cities.map(c => c.lon).join(',');
+  const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lats}&longitude=${lons}&current=temperature_2m,relative_humidity_2m,precipitation,rain,weather_code,is_day&timezone=Asia/Kolkata,Asia/Kolkata,Asia/Kolkata,Asia/Kolkata`;
+
+  const response = await fetch(weatherUrl);
+  if (!response.ok) {
+    throw new Error(`Open-Meteo API returned status ${response.status}`);
+  }
+  const weatherData = await response.json();
+
+  const weatherCacheRows = [];
+  for (let i = 0; i < cities.length; i++) {
+    const city = cities[i];
+    const raw = weatherData[i];
+    const temp = raw.current.temperature_2m;
+    const humidity = raw.current.relative_humidity_2m;
+    const precipitation = raw.current.precipitation;
+    const rain = raw.current.rain;
+    const weatherCode = raw.current.weather_code;
+    const isDay = raw.current.is_day;
+
+    let condition = 'normal';
+    if (temp >= 35) {
+      condition = 'hot';
+    } else if (precipitation > 0 || rainyCodes.includes(weatherCode)) {
+      condition = 'rainy';
+    }
+
+    weatherCacheRows.push({
+      city: city.name,
+      temperature: temp,
+      humidity: humidity,
+      precipitation: precipitation,
+      rain: rain,
+      weather_code: weatherCode,
+      is_day: isDay,
+      condition: condition,
+      fetched_at: new Date().toISOString()
+    });
+  }
+
+  // 2. Insert weather cache rows into Supabase
+  const { error: cacheError } = await supabase
+    .from('weather_cache')
+    .insert(weatherCacheRows);
+  if (cacheError) throw cacheError;
+
+  // 3. Fetch current line items to transition
+  const { data: lineItems, error: itemsError } = await supabase
+    .from('line_items')
+    .select('*');
+  if (itemsError) throw itemsError;
+
+  const logsToInsert = [];
+  const itemsToUpdate = [];
+
+  for (const weather of weatherCacheRows) {
+    const targetCondition = weather.condition;
+    const cityItems = lineItems.filter(item => item.city === weather.city);
+
+    for (const item of cityItems) {
+      const shouldBeActive = item.condition_trigger === targetCondition;
+      const expectedState = shouldBeActive ? 'active' : 'paused';
+
+      if (item.state !== expectedState) {
+        itemsToUpdate.push({ id: item.id, state: expectedState });
+
+        let reason = '';
+        if (expectedState === 'active') {
+          if (targetCondition === 'hot') {
+            reason = `Temperature rose to ${weather.temperature}°C, above 35°C threshold`;
+          } else if (targetCondition === 'rainy') {
+            if (weather.precipitation > 0) {
+              reason = `Precipitation detected: ${weather.precipitation}mm in last 15 minutes`;
+            } else {
+              reason = `Weather code ${weather.weather_code} detected — drizzle/rain/storm condition`;
+            }
+          } else {
+            reason = `Conditions normal — temp ${weather.temperature}°C, no precipitation detected`;
+          }
+        } else {
+          reason = `Paused — condition changed to ${targetCondition}`;
+        }
+
+        logsToInsert.push({
+          city: item.city,
+          creative_name: item.creative_name,
+          old_state: item.state,
+          new_state: expectedState,
+          reason: reason,
+          triggered_by: triggeredBy,
+          created_at: new Date().toISOString()
+        });
+      }
+    }
+  }
+
+  // 4. Update changed items in parallel
+  if (itemsToUpdate.length > 0) {
+    const updatePromises = itemsToUpdate.map(update =>
+      supabase
+        .from('line_items')
+        .update({ state: update.state })
+        .eq('id', update.id)
+    );
+    await Promise.all(updatePromises);
+  }
+
+  // 5. Insert transition logs
+  if (logsToInsert.length > 0) {
+    const { error: logsError } = await supabase
+      .from('transition_logs')
+      .insert(logsToInsert);
+    if (logsError) throw logsError;
+  }
+
+  return { weather: weatherCacheRows, logs: logsToInsert };
+}
+
