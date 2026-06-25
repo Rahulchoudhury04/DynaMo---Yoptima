@@ -242,6 +242,7 @@ export default function App() {
   const [isNewCampaignOpen, setIsNewCampaignOpen] = useState(false);
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
+  const [showToast, setShowToast] = useState(false);
   const [isNotificationDropdownOpen, setIsNotificationDropdownOpen] = useState(false);
   const [showAllLogs, setShowAllLogs] = useState(false);
   const [lastSyncedTimeAgo, setLastSyncedTimeAgo] = useState('never');
@@ -869,6 +870,17 @@ export default function App() {
     localStorage.setItem('dynamo_active_tab', tab);
   };
 
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText("https://dyna-mo-yoptima.vercel.app")
+      .then(() => {
+        setShowToast(true);
+        setTimeout(() => setShowToast(false), 2000);
+      })
+      .catch((err) => {
+        console.error("Failed to copy link:", err);
+      });
+  };
+
   const handleViewAllActivity = (e) => {
     e.stopPropagation();
     setIsNotificationDropdownOpen(false);
@@ -966,8 +978,8 @@ export default function App() {
               </svg>
             </span>
           </span>
-          <span className="nav-separator" style={{ color: 'var(--border-light)', fontSize: '18px', fontWeight: 300 }}>/</span>
-          <div className="campaign-pill">
+          <span className="nav-separator hide-on-mobile" style={{ color: 'var(--border-light)', fontSize: '18px', fontWeight: 300 }}>/</span>
+          <div className="campaign-pill hide-on-mobile">
             <GlassWater size={13} style={{ color: 'var(--campaign-pill-icon-color)' }} />
             <span>CoolSip — Summer 2026</span>
             <ChevronDown size={12} style={{ color: 'var(--navbar-icon-color)' }} />
@@ -977,7 +989,7 @@ export default function App() {
         <div className="nav-right">
           {/* Apps Grid Button */}
           <button 
-            className="navbar-icon-btn" 
+            className="navbar-icon-btn hide-on-mobile" 
             onClick={() => setIsNewCampaignOpen(true)}
             title="DynaMo Platform"
             aria-label="DynaMo Platform"
@@ -992,7 +1004,7 @@ export default function App() {
 
           {/* Info Button */}
           <button 
-            className="navbar-icon-btn" 
+            className="navbar-icon-btn hide-on-mobile" 
             onClick={() => setIsInfoModalOpen(true)}
             title="How DynaMo Works"
             aria-label="How DynaMo Works"
@@ -1022,38 +1034,25 @@ export default function App() {
           {/* User profile dropdown card */}
           {isUserDropdownOpen && (
             <div className="profile-dropdown" ref={dropdownRef}>
-              <div className="profile-header-new">
-                <div className="profile-avatar-large">RC</div>
-                <div className="profile-info-new">
-                  <span className="profile-name-bold">Rahul Choudhury</span>
-                  <span className="profile-role-muted">Campaign Manager</span>
-                  <span className="profile-email-small">rahulchouhdury.official@gmail.com</span>
-                </div>
-              </div>
-              <div className="profile-divider"></div>
-              <div className="profile-menu">
-                <div className="profile-menu-item" onClick={() => alert('My Profile clicked')}>
-                  <User size={16} className="menu-icon" />
-                  <span>My Profile</span>
-                </div>
-                <div className="profile-menu-item" onClick={() => alert('Settings clicked')}>
-                  <Settings size={16} className="menu-icon" />
-                  <span>Settings</span>
-                </div>
-                <div className="profile-menu-item" onClick={() => alert('Help clicked')}>
-                  <HelpCircle size={16} className="menu-icon" />
-                  <span>Help</span>
-                </div>
-              </div>
-              <div className="profile-divider"></div>
-              <button className="btn-signout-new" onClick={() => alert('Sign out option clicked. (Assessment Mock)')}>
-                <LogOut size={16} className="logout-icon" />
-                <span>Sign Out</span>
+              <p style={{ fontSize: '12px', color: 'var(--text-muted)', margin: '0 0 10px 0', lineHeight: '1.4', textAlign: 'left' }}>
+                Anyone with the link can view this dashboard
+              </p>
+              <button className="btn-copy-link" onClick={handleCopyLink}>
+                Copy Link
               </button>
             </div>
           )}
         </div>
       </nav>
+
+      {/* Mobile Campaign Bar */}
+      <div className="campaign-bar-mobile">
+        <div className="campaign-pill">
+          <GlassWater size={13} style={{ color: 'var(--campaign-pill-icon-color)' }} />
+          <span>CoolSip — Summer 2026</span>
+          <ChevronDown size={12} style={{ color: 'var(--navbar-icon-color)' }} />
+        </div>
+      </div>
 
       {/* Main Content Area */}
       <main className="main-content">
@@ -1205,7 +1204,7 @@ export default function App() {
         <section id="recent-activity" className="activity-section">
           <div className="activity-header" style={{ padding: '20px 24px 12px 24px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
-              <h2 className="activity-title" style={{ fontSize: '16px', fontWeight: 700, margin: 0, color: '#111827' }}>Recent Activity</h2>
+              <h2 className="activity-title">Recent Activity</h2>
               <button className="view-all-link" onClick={() => setShowAllLogs(!showAllLogs)} style={{ fontSize: '14px', fontWeight: 600, color: '#2563EB', cursor: 'pointer' }}>
                 <span>{showAllLogs ? 'Show Less' : 'View All Activity →'}</span>
               </button>
@@ -1228,6 +1227,7 @@ export default function App() {
                   className="activity-row"
                   style={{ borderLeft: `4px solid ${getLogBorderColor(log)}` }}
                 >
+                  <span className="activity-dot" style={{ backgroundColor: getLogBorderColor(log) }}></span>
                   <span className="activity-city-name">{log.city}</span>
                   <span className="activity-timestamp">{formatTime(log.created_at)}</span>
                   <div className="activity-condition-badge-wrapper">
@@ -1479,6 +1479,12 @@ export default function App() {
               </div>
             </div>
           </div>
+        </div>
+      )}
+
+      {showToast && (
+        <div className="toast-notification">
+          Link copied!
         </div>
       )}
     </div>

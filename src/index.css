@@ -2242,3 +2242,280 @@ a {
   background-color: var(--line-item-row-hover);
   color: var(--text-main);
 }
+
+/* =====================================================
+   COPY LINK BUTTON (Profile popover)
+   ===================================================== */
+.btn-copy-link {
+  width: 100%;
+  padding: 8px 14px;
+  background-color: #2563EB;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  text-align: center;
+}
+
+.btn-copy-link:hover {
+  background-color: #1D4ED8;
+}
+
+/* =====================================================
+   TOAST NOTIFICATION (Link copied!)
+   ===================================================== */
+.toast-notification {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #22C55E;
+  color: #FFFFFF;
+  padding: 10px 22px;
+  border-radius: 24px;
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: 0 4px 16px rgba(34, 197, 94, 0.35);
+  z-index: 9999;
+  animation: toastSlideUp 0.25s ease-out;
+  white-space: nowrap;
+}
+
+@keyframes toastSlideUp {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* =====================================================
+   ACTIVITY SECTION TITLE — theme-aware color
+   ===================================================== */
+.activity-title {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0;
+  color: var(--text-main);
+}
+
+/* =====================================================
+   MOBILE UTILITY CLASSES
+   ===================================================== */
+
+/* Hide elements on mobile (shown on desktop only) */
+.hide-on-mobile {
+  /* visible by default on desktop — hidden via media query below */
+}
+
+/* Campaign bar shown only on mobile below navbar */
+.campaign-bar-mobile {
+  display: none; /* hidden by default on desktop */
+  padding: 8px 16px;
+  background-color: var(--navbar-bg);
+  border-bottom: 1px solid var(--navbar-border);
+}
+
+/* =====================================================
+   RESPONSIVE — MOBILE (max-width: 767px)
+   ===================================================== */
+@media (max-width: 767px) {
+
+  /* Hide desktop-only elements */
+  .hide-on-mobile {
+    display: none !important;
+  }
+
+  /* Show mobile campaign bar */
+  .campaign-bar-mobile {
+    display: flex;
+    align-items: center;
+  }
+
+  /* Navbar — reduce padding */
+  .navbar {
+    padding: 0 16px;
+    height: 56px;
+  }
+
+  /* Nav right — tighten spacing */
+  .nav-right {
+    gap: 8px;
+  }
+
+  /* Navbar icon buttons — slightly smaller on mobile */
+  .navbar-icon-btn {
+    width: 34px;
+    height: 34px;
+  }
+
+  /* Main content — reduce padding */
+  .main-content {
+    padding: 16px 12px;
+    gap: 16px;
+  }
+
+  /* Stat cards — 2-column grid on mobile */
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .stat-card {
+    padding: 14px;
+  }
+
+  .stat-value {
+    font-size: 24px;
+  }
+
+  /* City filter tabs — scrollable horizontal strip */
+  .tabs-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 0 12px;
+    gap: 6px;
+    flex-wrap: nowrap;
+    scrollbar-width: none;
+  }
+
+  .tabs-container::-webkit-scrollbar {
+    display: none;
+  }
+
+  .tab-button {
+    flex-shrink: 0;
+    padding: 6px 14px;
+    font-size: 13px;
+  }
+
+  /* City cards — single column on mobile */
+  .cards-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .single-card-container {
+    max-width: 100%;
+    padding: 0;
+  }
+
+  /* Card header — slightly shorter */
+  .card-header {
+    height: 140px !important;
+  }
+
+  /* Line item rows — smaller text */
+  .creative-name {
+    font-size: 13px;
+  }
+
+  /* Activity section */
+  .activity-section {
+    border-radius: 12px;
+  }
+
+  .activity-header {
+    padding: 16px 16px 10px 16px !important;
+  }
+
+  /* Activity rows — reduce font sizes */
+  .activity-row {
+    font-size: 12px;
+    flex-wrap: wrap;
+    gap: 4px;
+    padding: 10px 12px;
+    min-height: unset;
+  }
+
+  .activity-city-name {
+    font-size: 13px;
+    font-weight: 700;
+    min-width: 80px;
+  }
+
+  .activity-timestamp {
+    font-size: 11px;
+  }
+
+  .activity-creative-flow {
+    font-size: 12px;
+    flex-basis: 100%;
+  }
+
+  .activity-reason-text {
+    font-size: 11px;
+    flex-basis: 100%;
+  }
+
+  /* Profile dropdown — position from right edge */
+  .profile-dropdown {
+    right: -12px;
+    width: 220px;
+  }
+
+  /* Platform modal — full screen on mobile */
+  .platform-modal-card {
+    width: 100%;
+    max-width: 100%;
+    max-height: 100dvh;
+    border-radius: 0;
+    margin: 0;
+  }
+
+  .platform-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  /* How DynaMo Works modal — full screen */
+  .how-it-works-modal {
+    width: 100%;
+    max-width: 100%;
+    max-height: 100dvh;
+    border-radius: 0;
+    margin: 0;
+  }
+
+  /* Flow diagram — wrap */
+  .flow-diagram {
+    justify-content: flex-start;
+    gap: 4px;
+  }
+
+  .flow-step {
+    min-width: 80px;
+    font-size: 11px;
+    padding: 4px 8px;
+  }
+
+  /* Sources grid — single column */
+  .sources-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  /* Campaign pill in mobile bar — smaller */
+  .campaign-bar-mobile .campaign-pill {
+    font-size: 12px;
+    padding: 4px 8px;
+  }
+
+  /* Toast — safe bottom margin for phones */
+  .toast-notification {
+    bottom: 20px;
+  }
+
+  /* Notifications dropdown — full width */
+  .notifications-dropdown {
+    width: calc(100vw - 32px);
+    min-width: unset;
+    right: -16px;
+  }
+}
