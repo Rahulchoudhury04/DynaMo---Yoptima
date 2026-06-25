@@ -288,28 +288,59 @@ function OnboardingTour({ step, onNext, onSkip }) {
 
   if (!currentStep || !targetRect) return null;
 
-  // Calculate tooltip position
-  const tooltipStyle = {};
-  const padding = 12;
-  const tooltipHeight = 200; // approximate tooltip height
-  
-  // Center horizontally relative to target
-  tooltipStyle.left = Math.max(16, Math.min(
-    targetRect.viewportLeft + targetRect.width / 2 - 160,
-    window.innerWidth - 336
-  ));
+  const isMobile = window.innerWidth <= 580;
 
-  // If placing below target would overflow viewport, position inside top of target
-  const bottomPos = targetRect.viewportTop + targetRect.height + padding;
-  if (bottomPos + tooltipHeight > window.innerHeight) {
-    tooltipStyle.top = Math.max(padding, targetRect.viewportTop + padding);
-  } else {
-    tooltipStyle.top = bottomPos;
+  // Step icons for mobile bottom sheet
+  const stepIcons = ['⚡', '🌦️', '🔄', '🔁'];
+
+  // Desktop: calculate tooltip position
+  const tooltipStyle = {};
+  if (!isMobile) {
+    const padding = 12;
+    const tooltipHeight = 200;
+    
+    tooltipStyle.left = Math.max(16, Math.min(
+      targetRect.viewportLeft + targetRect.width / 2 - 160,
+      window.innerWidth - 336
+    ));
+
+    const bottomPos = targetRect.viewportTop + targetRect.height + padding;
+    if (bottomPos + tooltipHeight > window.innerHeight) {
+      tooltipStyle.top = Math.max(padding, targetRect.viewportTop + padding);
+    } else {
+      tooltipStyle.top = bottomPos;
+    }
   }
 
+  // Mobile: bottom sheet layout (no spotlight)
+  if (isMobile) {
+    return (
+      <div className="tour-overlay tour-mobile" onClick={onSkip}>
+        <div className="tour-mobile-sheet" onClick={(e) => e.stopPropagation()}>
+          <div className="tour-mobile-handle" />
+          <div className="tour-mobile-icon">{stepIcons[step - 1]}</div>
+          <div className="tour-tooltip-step">Step {step} of 4</div>
+          <h3 className="tour-tooltip-title">{currentStep.title}</h3>
+          <p className="tour-tooltip-desc">{currentStep.description}</p>
+          <div className="tour-tooltip-footer">
+            <button className="tour-btn-skip" onClick={onSkip}>Skip</button>
+            <div className="tour-dots">
+              {[1, 2, 3, 4].map(i => (
+                <span key={i} className={`tour-dot ${i === step ? 'active' : ''}`} />
+              ))}
+            </div>
+            <button className="tour-btn-next" onClick={onNext}>
+              {step >= 4 ? 'Got it!' : 'Next'}
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Desktop: spotlight + tooltip
   return (
     <div className="tour-overlay" onClick={onSkip}>
-      {/* SVG overlay with cutout */}
       <svg className="tour-svg-overlay" width="100%" height="100%">
         <defs>
           <mask id="tour-mask">
@@ -329,7 +360,6 @@ function OnboardingTour({ step, onNext, onSkip }) {
           fill="rgba(0,0,0,0.65)"
           mask="url(#tour-mask)"
         />
-        {/* Spotlight ring */}
         <rect
           x={targetRect.viewportLeft - 6}
           y={targetRect.viewportTop - 6}
@@ -343,7 +373,6 @@ function OnboardingTour({ step, onNext, onSkip }) {
         />
       </svg>
 
-      {/* Tooltip */}
       <div
         className="tour-tooltip"
         style={tooltipStyle}
