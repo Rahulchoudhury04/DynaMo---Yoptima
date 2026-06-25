@@ -857,7 +857,7 @@ export default function App() {
     : activeLogs.filter(log => log.city === activeTab);
 
   // Compute stat card metrics
-  const activeLineItemsCount = activeItems.length;
+  const activeLineItemsCount = lineItems.filter(item => item.state === 'active').length;
 
 
   // Compute unread notifications count
