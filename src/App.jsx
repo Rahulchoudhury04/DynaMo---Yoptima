@@ -261,25 +261,6 @@ export default function App() {
   // Next sync countdown state
   const [nextSyncMs, setNextSyncMs] = useState(15 * 60 * 1000); // 15 mins default
 
-  // Historical date filter state
-  const getLocalYYYYMMDD = (date = new Date()) => {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  };
-  const todayStr = getLocalYYYYMMDD();
-  
-  const formatDateDisplay = (dateStr) => {
-    const d = new Date(dateStr);
-    return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
-  };
-  
-  const [selectedDate, setSelectedDate] = useState(todayStr);
-  const [minDate, setMinDate] = useState(todayStr);
-  const [historicalLogs, setHistoricalLogs] = useState([]);
-  const [isFetchingHistory, setIsFetchingHistory] = useState(false);
-
   // Next Sync Countdown Effect
   useEffect(() => {
     if (isRefreshing) return; // Pause while syncing
@@ -392,17 +373,6 @@ export default function App() {
       // Always set weatherCache, even if empty, so the UI state is updated
       setWeatherCache(latestWeather);
 
-      // Fetch earliest log for minDate
-      const { data: minLog } = await supabase
-        .from('transition_logs')
-        .select('created_at')
-        .order('created_at', { ascending: true })
-        .limit(1);
-      
-      if (minLog && minLog.length > 0) {
-        setMinDate(getLocalYYYYMMDD(new Date(minLog[0].created_at)));
-      }
-
       // 3. Fetch transition logs (limit to 100 for "View All")
       const { data: logs, error: logsError } = await supabase
         .from('transition_logs')
@@ -484,54 +454,6 @@ export default function App() {
 
     return () => clearInterval(timeInterval);
   }, [weatherCache]);
-
-  // Historical Logs Fetch Effect
-  useEffect(() => {
-    if (selectedDate === todayStr) {
-      setHistoricalLogs([]);
-      return;
-    }
-    
-    const fetchHistoricalLogs = async () => {
-      setIsFetchingHistory(true);
-      try {
-        if (!supabase || isDemoMode) {
-          // Mock filtering for demo mode
-          const [y, m, d] = selectedDate.split('-');
-          const start = new Date(y, m - 1, d, 0, 0, 0).getTime();
-          const end = new Date(y, m - 1, d, 23, 59, 59, 999).getTime();
-          const filtered = transitionLogs.filter(log => {
-             const t = new Date(log.created_at).getTime();
-             return t >= start && t <= end;
-          });
-          setHistoricalLogs(filtered);
-          return;
-        }
-
-        // Supabase query
-        const [y, m, d] = selectedDate.split('-');
-        const startDate = new Date(y, m - 1, d, 0, 0, 0);
-        const endDate = new Date(y, m - 1, d, 23, 59, 59, 999);
-        
-        const { data, error } = await supabase
-          .from('transition_logs')
-          .select('*')
-          .gte('created_at', startDate.toISOString())
-          .lte('created_at', endDate.toISOString())
-          .order('created_at', { ascending: false });
-          
-        if (error) throw error;
-        setHistoricalLogs(data || []);
-      } catch (err) {
-        console.error("Failed to fetch historical logs:", err);
-        setHistoricalLogs([]);
-      } finally {
-        setIsFetchingHistory(false);
-      }
-    };
-    
-    fetchHistoricalLogs();
-  }, [selectedDate, transitionLogs, supabase, isDemoMode, todayStr]);
 
   // Launch Demo Mode
   const startDemoMode = () => {
@@ -934,8 +856,6 @@ export default function App() {
     ? activeLogs
     : activeLogs.filter(log => log.city === activeTab);
 
-  const displayLogs = selectedDate === todayStr ? filteredLogs : historicalLogs;
-
   // Compute stat card metrics
   const activeLineItemsCount = lineItems.filter(item => item.state === 'active').length;
 
@@ -1246,32 +1166,11 @@ export default function App() {
         </div>
       )}
 
-      {/* Historical Banner */}
-      <div className={`historical-banner ${selectedDate !== todayStr ? 'visible' : ''}`}>
-        <div className="historical-banner-content">
-          <div className="historical-banner-left">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '8px' }}>
-              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-              <line x1="16" y1="2" x2="16" y2="6"></line>
-              <line x1="8" y1="2" x2="8" y2="6"></line>
-              <line x1="3" y1="10" x2="21" y2="10"></line>
-            </svg>
-            <span>Viewing historical activity for {formatDateDisplay(selectedDate)}</span>
-          </div>
-          <button className="historical-banner-reset" onClick={() => setSelectedDate(todayStr)}>
-            Return to live dashboard
-          </button>
-        </div>
-      </div>
-
       {/* Main Content Area */}
       <main className="main-content">
         
-        {/* Live Sections Wrapper */}
-        <div className={`live-sections-wrapper ${selectedDate !== todayStr ? 'hidden' : ''}`}>
-          
-          {/* 4 Stat Cards */}
-          <section className="stats-grid">
+        {/* 4 Stat Cards */}
+        <section className="stats-grid">
           <div className="stat-card">
             <div className="stat-left">
               <span className="stat-label">Ads running</span>
@@ -1416,54 +1315,29 @@ export default function App() {
             );
           })}
         </section>
-        </div>
 
         {/* Recent Activity Log */}
         <section id="recent-activity" className="activity-section">
           <div className="activity-header" style={{ padding: '20px 24px 12px 24px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
-              <h2 className="activity-title">
-                {selectedDate === todayStr ? 'Recent Activity' : `Activity on ${formatDateDisplay(selectedDate)}`}
-              </h2>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                <input 
-                  type="date" 
-                  className="activity-date-picker"
-                  value={selectedDate}
-                  min={minDate}
-                  max={todayStr}
-                  onChange={(e) => setSelectedDate(e.target.value)}
-                />
-                <button className="view-all-link" onClick={() => setShowAllLogs(!showAllLogs)} style={{ fontSize: '14px', fontWeight: 600, color: '#2563EB', cursor: 'pointer', whiteSpace: 'nowrap' }}>
-                  <span>{showAllLogs ? 'Show Less' : 'View All Activity →'}</span>
-                </button>
-              </div>
+              <h2 className="activity-title">Recent Activity</h2>
+              <button className="view-all-link" onClick={() => setShowAllLogs(!showAllLogs)} style={{ fontSize: '14px', fontWeight: 600, color: '#2563EB', cursor: 'pointer' }}>
+                <span>{showAllLogs ? 'Show Less' : 'View All Activity →'}</span>
+              </button>
             </div>
-            {selectedDate === todayStr && (
-              <div style={{ fontSize: '13px', color: '#6B7280', margin: 0 }}>
-                Live updates via Open-Meteo
-              </div>
-            )}
+            <div style={{ fontSize: '13px', color: '#6B7280', margin: 0 }}>
+              Live updates via Open-Meteo
+            </div>
           </div>
           
           <div className="activity-list">
-            {isFetchingHistory ? (
+            {filteredLogs.length === 0 ? (
               <div className="activity-empty-state">
-                <span className="pulse-dot" style={{ display: 'inline-block', marginRight: '8px' }}></span>
-                <span>Loading historical data...</span>
-              </div>
-            ) : displayLogs.length === 0 ? (
-              <div className="activity-empty-state">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '8px', opacity: 0.5 }}>
-                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                  <line x1="16" y1="2" x2="16" y2="6"></line>
-                  <line x1="8" y1="2" x2="8" y2="6"></line>
-                  <line x1="3" y1="10" x2="21" y2="10"></line>
-                </svg>
-                <span>No activity recorded on this date</span>
+                <Clock size={16} className="empty-icon" />
+                <span>No activity yet — waiting for first weather cycle</span>
               </div>
             ) : (
-              (showAllLogs ? displayLogs : displayLogs.slice(0, 8)).map((log) => (
+              (showAllLogs ? filteredLogs : filteredLogs.slice(0, 8)).map((log) => (
                 <div 
                   key={log.id} 
                   className="activity-row"
@@ -1489,14 +1363,14 @@ export default function App() {
             )}
           </div>
 
-          {displayLogs.length > 0 && (
+          {filteredLogs.length > 0 && (
             <>
               <div className="activity-footer-divider"></div>
               <div className="activity-footer">
                 <span className="footer-text">
-                  Showing {Math.min(showAllLogs ? displayLogs.length : 8, displayLogs.length)} of {displayLogs.length} total events
+                  Showing {Math.min(showAllLogs ? filteredLogs.length : 8, filteredLogs.length)} of {filteredLogs.length} total events
                 </span>
-                {!showAllLogs && displayLogs.length > 8 && (
+                {!showAllLogs && filteredLogs.length > 8 && (
                   <button className="btn-load-more" onClick={() => setShowAllLogs(true)}>
                     Load More
                   </button>
