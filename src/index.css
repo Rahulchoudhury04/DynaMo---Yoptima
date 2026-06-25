@@ -3073,3 +3073,60 @@ a {
     right: -16px;
   }
 }
+
+/* Campaign Analytics Styles */
+.analytics-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+@media (max-width: 1024px) {
+  .analytics-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.analytics-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.chart-span-2 {
+  grid-column: 1 / -1;
+  max-width: 800px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.analytics-chart-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 16px 0;
+  text-align: left;
+}
+
+.chart-container {
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 240px;
+  position: relative;
+}
+
+.chart-empty-state {
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+}

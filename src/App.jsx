@@ -1,6 +1,8 @@
 // src/App.jsx
 import React, { useState, useEffect, useRef } from 'react';
 import { supabase } from './supabaseClient';
+import * as XLSX from 'xlsx';
+import { BarChart, Bar, XAxis, YAxis, Tooltip as RechartsTooltip, Legend, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell, CartesianGrid } from 'recharts';
 import { seedLineItemsIfEmpty, triggerManualRefresh, syncWeatherDirectly } from './services/weatherService';
 import { 
   GlassWater, 
@@ -37,7 +39,8 @@ import {
   Users2,
   Link2,
   DollarSign,
-  SlidersHorizontal
+  SlidersHorizontal,
+  Download
 } from 'lucide-react';
 
 function getHeaderBgColor(condition, isDay) {
@@ -261,6 +264,11 @@ export default function App() {
   // Next sync countdown state
   const [nextSyncMs, setNextSyncMs] = useState(15 * 60 * 1000); // 15 mins default
 
+  // Campaign Analytics State
+  const [analyticsPeriod, setAnalyticsPeriod] = useState('7d'); // '7d', '30d', 'all'
+  const [isExporting, setIsExporting] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+
   // Next Sync Countdown Effect
   useEffect(() => {
     if (isRefreshing) return; // Pause while syncing
@@ -373,12 +381,11 @@ export default function App() {
       // Always set weatherCache, even if empty, so the UI state is updated
       setWeatherCache(latestWeather);
 
-      // 3. Fetch transition logs (limit to 100 for "View All")
+      // 3. Fetch all transition logs for analytics
       const { data: logs, error: logsError } = await supabase
         .from('transition_logs')
         .select('*')
-        .order('created_at', { ascending: false })
-        .limit(100);
+        .order('created_at', { ascending: false });
 
       if (logsError) throw logsError;
       setTransitionLogs(logs || []);
@@ -923,6 +930,146 @@ export default function App() {
     }, 50);
   };
 
+  // --- Analytics Data Preparation ---
+  const analyticsLogs = React.useMemo(() => {
+    if (analyticsPeriod === 'all') return transitionLogs;
+    const days = analyticsPeriod === '7d' ? 7 : 30;
+    const cutoff = Date.now() - (days * 24 * 60 * 60 * 1000);
+    return transitionLogs.filter(log => new Date(log.created_at).getTime() >= cutoff);
+  }, [transitionLogs, analyticsPeriod]);
+
+  const chart1Data = React.useMemo(() => {
+    const dataByCity = { Mumbai: { HOT: 0, RAINY: 0, NORMAL: 0 }, Delhi: { HOT: 0, RAINY: 0, NORMAL: 0 }, Bangalore: { HOT: 0, RAINY: 0, NORMAL: 0 }, Chennai: { HOT: 0, RAINY: 0, NORMAL: 0 } };
+    analyticsLogs.forEach(log => {
+      if (log.new_state === 'active') {
+        const cond = log.condition ? log.condition.toUpperCase() : 'NORMAL';
+        if (dataByCity[log.city] && dataByCity[log.city][cond] !== undefined) {
+          dataByCity[log.city][cond]++;
+        }
+      }
+    });
+    return CITY_ORDER.map(city => ({
+      city,
+      HOT: dataByCity[city].HOT,
+      RAINY: dataByCity[city].RAINY,
+      NORMAL: dataByCity[city].NORMAL
+    }));
+  }, [analyticsLogs]);
+
+  const chart2Data = React.useMemo(() => {
+    const datesMap = new Map();
+    // Pre-fill zeros for selected period so line chart connects properly
+    if (analyticsPeriod !== 'all') {
+      const days = analyticsPeriod === '7d' ? 7 : 30;
+      for (let i = days - 1; i >= 0; i--) {
+        const d = new Date();
+        d.setDate(d.getDate() - i);
+        const key = d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' });
+        datesMap.set(key, { date: key, Mumbai: 0, Delhi: 0, Bangalore: 0, Chennai: 0, timestamp: d.getTime() });
+      }
+    } else if (analyticsLogs.length > 0) {
+      const timestamps = analyticsLogs.map(l => new Date(l.created_at).getTime());
+      const oldest = new Date(Math.min(...timestamps));
+      const today = new Date();
+      for (let d = new Date(oldest); d <= today; d.setDate(d.getDate() + 1)) {
+        const key = d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' });
+        datesMap.set(key, { date: key, Mumbai: 0, Delhi: 0, Bangalore: 0, Chennai: 0, timestamp: d.getTime() });
+      }
+    }
+
+    analyticsLogs.forEach(log => {
+      const d = new Date(log.created_at);
+      const key = d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' });
+      if (!datesMap.has(key)) {
+         datesMap.set(key, { date: key, Mumbai: 0, Delhi: 0, Bangalore: 0, Chennai: 0, timestamp: d.getTime() });
+      }
+      const entry = datesMap.get(key);
+      if (entry[log.city] !== undefined) {
+        entry[log.city]++;
+      }
+    });
+
+    return Array.from(datesMap.values()).sort((a,b) => a.timestamp - b.timestamp);
+  }, [analyticsLogs, analyticsPeriod]);
+
+  const chart3Data = React.useMemo(() => {
+    const counts = {};
+    let total = 0;
+    analyticsLogs.forEach(log => {
+      if (log.new_state === 'active') {
+        counts[log.creative_name] = (counts[log.creative_name] || 0) + 1;
+        total++;
+      }
+    });
+    
+    return Object.entries(counts).map(([name, count]) => ({
+      name,
+      value: count,
+      percentage: total > 0 ? Math.round((count / total) * 100) : 0
+    }));
+  }, [analyticsLogs]);
+
+  const totalActivations = chart3Data.reduce((acc, item) => acc + item.value, 0);
+
+  const CHART_COLORS = {
+    HOT: '#EF4444', RAINY: '#3B82F6', NORMAL: '#10B981',
+    Mumbai: '#6366f1', Delhi: '#eab308', Bangalore: '#ec4899', Chennai: '#14b8a6',
+    'Beat the Heat': '#EF4444', 'Rainy Day Pick-me-up': '#3B82F6', 'Refresh Anytime': '#10B981'
+  };
+
+  const handleExportReport = () => {
+    setIsExporting(true);
+    try {
+      if (analyticsLogs.length === 0) {
+        setToastMessage("No data available for this period");
+        setShowToast(true);
+        setTimeout(() => setShowToast(false), 3000);
+        setIsExporting(false);
+        return;
+      }
+
+      const sheet1Data = analyticsLogs.map(log => ({
+        Date: new Date(log.created_at).toLocaleDateString(),
+        Time: new Date(log.created_at).toLocaleTimeString(),
+        City: log.city,
+        'Creative Name': log.creative_name,
+        'Previous State': log.old_state,
+        'New State': log.new_state,
+        Reason: log.reason,
+        'Triggered By': log.triggered_by
+      }));
+
+      const sheet2Data = chart1Data.map(c => ({
+        City: c.city,
+        'HOT Count': c.HOT,
+        'RAINY Count': c.RAINY,
+        'NORMAL Count': c.NORMAL,
+        Total: c.HOT + c.RAINY + c.NORMAL
+      }));
+
+      const sheet3Data = chart3Data.map(c => ({
+        'Creative Name': c.name,
+        'Times Activated': c.value,
+        'Percentage of Total': `${c.percentage}%`
+      }));
+
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(sheet1Data), "Activity Log");
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(sheet2Data), "Condition Summary");
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(sheet3Data), "Creative Performance");
+
+      const today = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).replace(/ /g, '');
+      XLSX.writeFile(wb, `DynaMo_CoolSip_Report_${today}.xlsx`);
+    } catch (e) {
+      console.error(e);
+      setToastMessage("Export failed");
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 3000);
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
   // Supabase loading screen
   if (!isInitialized) {
     const loadingMessages = [
@@ -1378,6 +1525,166 @@ export default function App() {
               </div>
             </>
           )}
+        </section>
+
+        {/* Campaign Analytics Section */}
+        <section id="campaign-analytics" className="activity-section" style={{ marginTop: '24px' }}>
+          <div className="activity-header" style={{ padding: '20px 24px 20px 24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', flexWrap: 'wrap', gap: '16px' }}>
+              <h2 className="activity-title" style={{ margin: 0 }}>Campaign Analytics</h2>
+              
+              <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
+                <div className="filter-pills-group" style={{ display: 'flex', background: 'var(--bg-secondary)', padding: '4px', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
+                  {['7d', '30d', 'all'].map(period => {
+                    const labels = { '7d': '7 Days', '30d': '30 Days', 'all': 'All Time' };
+                    const isActive = analyticsPeriod === period;
+                    return (
+                      <button
+                        key={period}
+                        onClick={() => setAnalyticsPeriod(period)}
+                        style={{
+                          padding: '6px 16px',
+                          borderRadius: '6px',
+                          border: 'none',
+                          fontSize: '13px',
+                          fontWeight: 600,
+                          cursor: 'pointer',
+                          background: isActive ? 'var(--bg-primary)' : 'transparent',
+                          color: isActive ? 'var(--text-primary)' : 'var(--text-muted)',
+                          boxShadow: isActive ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+                          transition: 'all 0.2s'
+                        }}
+                      >
+                        {labels[period]}
+                      </button>
+                    )
+                  })}
+                </div>
+
+                <button 
+                  onClick={handleExportReport}
+                  disabled={isExporting}
+                  className="btn-export-report"
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    padding: '8px 16px',
+                    borderRadius: '8px',
+                    border: '1px solid var(--border-color)',
+                    background: 'var(--bg-primary)',
+                    color: 'var(--text-primary)',
+                    fontSize: '13px',
+                    fontWeight: 600,
+                    cursor: isExporting ? 'not-allowed' : 'pointer',
+                    transition: 'all 0.2s',
+                    opacity: isExporting ? 0.7 : 1
+                  }}
+                >
+                  <Download size={16} />
+                  {isExporting ? 'Generating...' : 'Export Report'}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div className="analytics-grid" style={{ padding: '0 24px 24px 24px' }}>
+            {/* Chart 1: Weather Conditions Detected */}
+            <div className="analytics-card">
+              <h3 className="analytics-chart-title">Weather Conditions Detected</h3>
+              <div className="chart-container">
+                {chart1Data.every(c => c.HOT === 0 && c.RAINY === 0 && c.NORMAL === 0) ? (
+                  <div className="chart-empty-state">No data available for this period</div>
+                ) : (
+                  <ResponsiveContainer width="100%" height={240}>
+                    <BarChart data={chart1Data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-color)" />
+                      <XAxis dataKey="city" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: 'var(--text-muted)' }} dy={10} />
+                      <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: 'var(--text-muted)' }} />
+                      <RechartsTooltip cursor={{ fill: 'var(--bg-secondary)' }} contentStyle={{ borderRadius: '8px', border: '1px solid var(--border-color)', background: 'var(--bg-primary)', color: 'var(--text-primary)' }} />
+                      <Legend iconType="square" wrapperStyle={{ fontSize: '12px', paddingTop: '10px' }} />
+                      <Bar dataKey="HOT" name="Hot" fill={CHART_COLORS.HOT} radius={[4, 4, 0, 0]} />
+                      <Bar dataKey="RAINY" name="Rainy" fill={CHART_COLORS.RAINY} radius={[4, 4, 0, 0]} />
+                      <Bar dataKey="NORMAL" name="Normal" fill={CHART_COLORS.NORMAL} radius={[4, 4, 0, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                )}
+              </div>
+            </div>
+
+            {/* Chart 2: Daily Switches */}
+            <div className="analytics-card">
+              <h3 className="analytics-chart-title">Daily Switches</h3>
+              <div className="chart-container">
+                {chart2Data.every(c => c.Mumbai === 0 && c.Delhi === 0 && c.Bangalore === 0 && c.Chennai === 0) ? (
+                  <div className="chart-empty-state">No data available for this period</div>
+                ) : (
+                  <ResponsiveContainer width="100%" height={240}>
+                    <LineChart data={chart2Data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-color)" />
+                      <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: 'var(--text-muted)' }} dy={10} />
+                      <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: 'var(--text-muted)' }} />
+                      <RechartsTooltip contentStyle={{ borderRadius: '8px', border: '1px solid var(--border-color)', background: 'var(--bg-primary)', color: 'var(--text-primary)' }} />
+                      <Legend iconType="plainline" wrapperStyle={{ fontSize: '12px', paddingTop: '10px' }} />
+                      <Line type="monotone" dataKey="Mumbai" stroke={CHART_COLORS.Mumbai} strokeWidth={2} dot={{ r: 4 }} activeDot={{ r: 6 }} />
+                      <Line type="monotone" dataKey="Delhi" stroke={CHART_COLORS.Delhi} strokeWidth={2} dot={{ r: 4 }} activeDot={{ r: 6 }} />
+                      <Line type="monotone" dataKey="Bangalore" stroke={CHART_COLORS.Bangalore} strokeWidth={2} dot={{ r: 4 }} activeDot={{ r: 6 }} />
+                      <Line type="monotone" dataKey="Chennai" stroke={CHART_COLORS.Chennai} strokeWidth={2} dot={{ r: 4 }} activeDot={{ r: 6 }} />
+                    </LineChart>
+                  </ResponsiveContainer>
+                )}
+              </div>
+            </div>
+
+            {/* Chart 3: Creative Distribution */}
+            <div className="analytics-card chart-span-2">
+              <h3 className="analytics-chart-title">Creative Distribution</h3>
+              <div className="chart-container" style={{ display: 'flex', justifyContent: 'center' }}>
+                {chart3Data.length === 0 ? (
+                  <div className="chart-empty-state">No data available for this period</div>
+                ) : (
+                  <ResponsiveContainer width="100%" height={260}>
+                    <PieChart>
+                      <Pie
+                        data={chart3Data}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={60}
+                        outerRadius={85}
+                        paddingAngle={2}
+                        dataKey="value"
+                        stroke="none"
+                      >
+                        {chart3Data.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={CHART_COLORS[entry.name] || '#94A3B8'} />
+                        ))}
+                      </Pie>
+                      <RechartsTooltip 
+                        formatter={(value, name, props) => [`${value} (${props.payload.percentage}%)`, name]}
+                        contentStyle={{ borderRadius: '8px', border: '1px solid var(--border-color)', background: 'var(--bg-primary)', color: 'var(--text-primary)' }} 
+                      />
+                      <Legend 
+                        layout="vertical" 
+                        verticalAlign="middle" 
+                        align="right"
+                        wrapperStyle={{ fontSize: '13px', lineHeight: '24px' }}
+                        formatter={(value, entry) => {
+                          const data = chart3Data.find(d => d.name === value);
+                          return <span style={{ color: 'var(--text-primary)' }}>{value} <span style={{ color: 'var(--text-muted)', marginLeft: '4px' }}>{data?.value} ({data?.percentage}%)</span></span>;
+                        }}
+                      />
+                      <text x="50%" y="46%" textAnchor="middle" dominantBaseline="middle" style={{ fontSize: '24px', fontWeight: 700, fill: 'var(--text-primary)' }}>
+                        {totalActivations}
+                      </text>
+                      <text x="50%" y="58%" textAnchor="middle" dominantBaseline="middle" style={{ fontSize: '12px', fill: 'var(--text-muted)', fontWeight: 500 }}>
+                        total activations
+                      </text>
+                    </PieChart>
+                  </ResponsiveContainer>
+                )}
+              </div>
+            </div>
+          </div>
         </section>
       </main>
 
