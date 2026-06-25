@@ -1,5 +1,5 @@
 // src/App.jsx
-import React, { useState, useEffect, useRef, useCallback, useLayoutEffect } from 'react';
+import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import { supabase } from './supabaseClient';
 import { seedLineItemsIfEmpty, triggerManualRefresh, syncWeatherDirectly } from './services/weatherService';
 import { 
