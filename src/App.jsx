@@ -317,25 +317,7 @@ export default function App() {
       try {
         // Seed if table is empty, then load data
         await seedLineItemsIfEmpty();
-        const data = await fetchData();
-        
-        // If we don't have weather data yet, trigger a sync!
-        if (!data || !data.latestWeather || data.latestWeather.length === 0) {
-          console.log("No weather cache found, triggering initial sync...");
-          try {
-            await triggerManualRefresh();
-            await fetchData();
-          } catch (edgeErr) {
-            console.warn("Edge function failed on load, falling back to direct Open-Meteo sync:", edgeErr);
-            try {
-              await syncWeatherDirectly('system');
-              setApiErrorBanner("Edge Function is unavailable. Fell back to direct Open-Meteo sync.");
-            } catch (directErr) {
-              console.error("Direct sync failed as well:", directErr);
-              setApiErrorBanner("Weather sync failed. Edge Function and Open-Meteo both unavailable.");
-            }
-          }
-        }
+        await fetchData();
       } catch (err) {
         console.error("Failed to initialize app from Supabase, entering Demo Mode:", err);
         startDemoMode();
@@ -583,36 +565,54 @@ export default function App() {
 
   // Helper formats
   const formatTime = (isoString) => {
-    const date = new Date(isoString);
-    return date.toLocaleTimeString('en-IN', {
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: true,
-      timeZone: 'Asia/Kolkata'
-    });
+    try {
+      const date = new Date(isoString);
+      if (isNaN(date.getTime())) return 'unknown';
+      return date.toLocaleTimeString('en-IN', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true,
+        timeZone: 'Asia/Kolkata'
+      });
+    } catch (e) {
+      return 'unknown';
+    }
   };
 
   const getExactLastSyncedTime = () => {
     if (weatherCache.length === 0) return '';
-    const timestamps = weatherCache.map(w => new Date(w.fetched_at).getTime());
-    const latestTime = Math.max(...timestamps);
-    const date = new Date(latestTime);
-    return date.toLocaleTimeString('en-IN', {
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: true,
-      timeZone: 'Asia/Kolkata'
-    });
+    try {
+      const timestamps = weatherCache.map(w => w && w.fetched_at ? new Date(w.fetched_at).getTime() : NaN).filter(t => !isNaN(t));
+      if (timestamps.length === 0) return 'never';
+      const latestTime = Math.max(...timestamps);
+      const date = new Date(latestTime);
+      if (isNaN(date.getTime())) return 'never';
+      return date.toLocaleTimeString('en-IN', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true,
+        timeZone: 'Asia/Kolkata'
+      });
+    } catch (e) {
+      console.error("Error formatting sync time:", e);
+      return 'unknown';
+    }
   };
 
   const formatNotificationTimeAgo = (isoString) => {
-    const diffMs = Date.now() - new Date(isoString).getTime();
-    const diffMin = Math.floor(diffMs / 60000);
-    if (diffMin <= 0) return 'Just now';
-    if (diffMin < 60) return `${diffMin}m ago`;
-    const diffHrs = Math.floor(diffMin / 60);
-    if (diffHrs < 24) return `${diffHrs}h ago`;
-    return new Date(isoString).toLocaleDateString('en-IN', { dateStyle: 'short' });
+    try {
+      const date = new Date(isoString);
+      if (isNaN(date.getTime())) return 'unknown';
+      const diffMs = Date.now() - date.getTime();
+      const diffMin = Math.floor(diffMs / 60000);
+      if (diffMin <= 0) return 'Just now';
+      if (diffMin < 60) return `${diffMin}m ago`;
+      const diffHrs = Math.floor(diffMin / 60);
+      if (diffHrs < 24) return `${diffHrs}h ago`;
+      return date.toLocaleDateString('en-IN', { dateStyle: 'short' });
+    } catch (e) {
+      return 'unknown';
+    }
   };
 
   const getLogDotColor = (log) => {
