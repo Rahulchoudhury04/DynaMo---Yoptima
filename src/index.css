@@ -2608,33 +2608,85 @@ a {
     padding: 16px 16px 10px 16px !important;
   }
 
-  /* Activity rows — reduce font sizes */
+  /* Activity rows — mobile card layout using CSS grid */
   .activity-row {
-    font-size: 12px;
-    flex-wrap: wrap;
-    gap: 4px;
-    padding: 10px 12px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto auto auto;
+    gap: 4px 8px;
+    padding: 12px 14px;
     min-height: unset;
-  }
-
-  .activity-city-name {
     font-size: 13px;
+    border-left-width: 3px !important;
+  }
+
+  /* Hide the dot on mobile — the left border provides the color accent */
+  .activity-dot {
+    display: none;
+  }
+
+  /* Row 1 left: city name */
+  .activity-city-name {
+    grid-column: 1;
+    grid-row: 1;
+    width: auto;
+    min-width: unset;
+    font-size: 14px;
     font-weight: 700;
-    min-width: 80px;
   }
 
+  /* Row 1 right: timestamp + condition badge inline */
   .activity-timestamp {
-    font-size: 11px;
-  }
-
-  .activity-creative-flow {
+    grid-column: 2;
+    grid-row: 1;
+    width: auto;
     font-size: 12px;
-    flex-basis: 100%;
+    text-align: right;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 6px;
   }
 
+  .activity-condition-badge-wrapper {
+    grid-column: 2;
+    grid-row: 1;
+    width: auto;
+    display: none; /* hide separate wrapper — we put badge inline via different approach */
+  }
+
+  /* Row 2 left: creative name */
+  .activity-creative-flow {
+    grid-column: 1;
+    grid-row: 2;
+    font-size: 13px;
+    flex-basis: unset;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: unset;
+  }
+
+  /* Row 2 right: trigger badge */
+  .activity-trigger-wrapper {
+    grid-column: 2;
+    grid-row: 2;
+    width: auto;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+  }
+
+  /* Row 3: reason text full width */
   .activity-reason-text {
-    font-size: 11px;
-    flex-basis: 100%;
+    grid-column: 1 / -1;
+    grid-row: 3;
+    width: auto;
+    flex-basis: unset;
+    font-size: 12px;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: unset;
+    margin-top: 2px;
   }
 
   /* Profile dropdown — position from right edge */
