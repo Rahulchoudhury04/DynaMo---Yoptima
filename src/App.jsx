@@ -760,21 +760,25 @@ export default function App() {
     .slice()
     .sort((a, b) => CITY_ORDER.indexOf(a.city) - CITY_ORDER.indexOf(b.city));
 
+  // Filter out any "paused" transition logs from the old format,
+  // showing only the row that activated the new creative, or new format status entries.
+  const activeLogs = transitionLogs.filter(log => log.new_state === 'active');
+
   // Compute stat card metrics
   const activeLineItemsCount = lineItems.filter(item => item.state === 'active').length;
-  const changesTodayCount = transitionLogs.filter(log => {
+  const changesTodayCount = activeLogs.filter(log => {
     const logDate = new Date(log.created_at).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' });
     const todayDate = new Date().toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' });
     return logDate === todayDate;
   }).length;
 
   // Compute unread notifications count
-  const unreadCount = transitionLogs.filter(
+  const unreadCount = activeLogs.filter(
     log => new Date(log.created_at).getTime() > lastOpenedNotificationsAt
   ).length;
 
   // Compute today's logs by condition type for summary pills
-  const todayLogs = transitionLogs.filter(log => {
+  const todayLogs = activeLogs.filter(log => {
     const logDate = new Date(log.created_at).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' });
     const todayDate = new Date().toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' });
     return logDate === todayDate;
@@ -917,7 +921,7 @@ export default function App() {
                   </button>
                 </div>
                 <div className="notifications-list">
-                  {transitionLogs.slice(0, 8).map((log) => (
+                  {activeLogs.slice(0, 8).map((log) => (
                     <div key={log.id} className="notification-item">
                       {/* Left: Simplified text format "City: Creative name → Active/Paused" */}
                       <span className="notification-desc">
@@ -930,7 +934,7 @@ export default function App() {
                       </span>
                     </div>
                   ))}
-                  {transitionLogs.slice(0, 8).length === 0 && (
+                  {activeLogs.slice(0, 8).length === 0 && (
                     <div style={{ padding: '1rem', textAlign: 'center', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
                       No notifications yet
                     </div>
@@ -1135,16 +1139,14 @@ export default function App() {
             </div>
           </div>
           
-          <div className="header-divider"></div>
-
           <div className="activity-list">
-            {transitionLogs.length === 0 ? (
+            {activeLogs.length === 0 ? (
               <div className="activity-empty-state">
                 <Clock size={16} className="empty-icon" />
                 <span>No activity yet — waiting for first weather cycle</span>
               </div>
             ) : (
-              (showAllLogs ? transitionLogs : transitionLogs.slice(0, 8)).map((log) => (
+              (showAllLogs ? activeLogs : activeLogs.slice(0, 8)).map((log) => (
                 <div 
                   key={log.id} 
                   className="activity-row"
@@ -1169,14 +1171,14 @@ export default function App() {
             )}
           </div>
 
-          {transitionLogs.length > 0 && (
+          {activeLogs.length > 0 && (
             <>
               <div className="activity-footer-divider"></div>
               <div className="activity-footer">
                 <span className="footer-text">
-                  Showing {Math.min(showAllLogs ? transitionLogs.length : 8, transitionLogs.length)} of {transitionLogs.length} total events
+                  Showing {Math.min(showAllLogs ? activeLogs.length : 8, activeLogs.length)} of {activeLogs.length} total events
                 </span>
-                {!showAllLogs && transitionLogs.length > 8 && (
+                {!showAllLogs && activeLogs.length > 8 && (
                   <button className="btn-load-more" onClick={() => setShowAllLogs(true)}>
                     Load More
                   </button>
