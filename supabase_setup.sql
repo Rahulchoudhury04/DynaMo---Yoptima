@@ -72,3 +72,25 @@ WHERE NOT EXISTS (SELECT 1 FROM line_items);
 --   );
 --   $$
 -- );
+
+-- 4. Row Level Security (RLS) policies
+-- Supabase enables RLS by default. These policies allow full read/write operations for the client.
+ALTER TABLE line_items ENABLE ROW LEVEL SECURITY;
+ALTER TABLE weather_cache ENABLE ROW LEVEL SECURITY;
+ALTER TABLE transition_logs ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Allow all operations on line_items" 
+ON line_items FOR ALL 
+USING (true) 
+WITH CHECK (true);
+
+CREATE POLICY "Allow all operations on weather_cache" 
+ON weather_cache FOR ALL 
+USING (true) 
+WITH CHECK (true);
+
+CREATE POLICY "Allow all operations on transition_logs" 
+ON transition_logs FOR ALL 
+USING (true) 
+WITH CHECK (true);
+
