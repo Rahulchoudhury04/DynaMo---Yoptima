@@ -271,19 +271,26 @@ export default function App() {
 
   // Next Sync Countdown Effect
   useEffect(() => {
-    if (isRefreshing) return; // Pause while syncing
+    if (isRefreshing || weatherCache.length === 0) {
+      if (isRefreshing) setNextSyncMs(0);
+      return;
+    }
     
-    const interval = setInterval(() => {
-      setNextSyncMs(prev => (prev >= 1000 ? prev - 1000 : 0));
-    }, 1000);
+    const updateCountdown = () => {
+      const timestamps = weatherCache.map(w => w && w.fetched_at ? new Date(w.fetched_at).getTime() : NaN).filter(t => !isNaN(t));
+      if (timestamps.length === 0) return;
+      const latestTime = Math.max(...timestamps);
+      const nextSyncTime = latestTime + 15 * 60 * 1000;
+      const diffMs = nextSyncTime - Date.now();
+      
+      setNextSyncMs(diffMs > 0 ? diffMs : 0);
+    };
+
+    updateCountdown();
+    const interval = setInterval(updateCountdown, 1000);
     
     return () => clearInterval(interval);
-  }, [isRefreshing]);
-
-  // Reset countdown after successful sync
-  useEffect(() => {
-    setNextSyncMs(15 * 60 * 1000);
-  }, [weatherCache]);
+  }, [weatherCache, isRefreshing]);
   
   // Error/loading states
   const [isInitialized, setIsInitialized] = useState(false);
@@ -702,6 +709,33 @@ export default function App() {
       console.error("Error formatting sync time:", e);
       return 'unknown';
     }
+  };
+
+  const getExactNextSyncTime = () => {
+    if (weatherCache.length === 0) return '';
+    try {
+      const timestamps = weatherCache.map(w => w && w.fetched_at ? new Date(w.fetched_at).getTime() : NaN).filter(t => !isNaN(t));
+      if (timestamps.length === 0) return '';
+      const latestTime = Math.max(...timestamps);
+      const nextSync = new Date(latestTime + 15 * 60 * 1000);
+      if (isNaN(nextSync.getTime())) return '';
+      return nextSync.toLocaleTimeString('en-IN', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true,
+        timeZone: 'Asia/Kolkata'
+      });
+    } catch (e) {
+      return '';
+    }
+  };
+
+  const formatCountdown = (ms) => {
+    if (ms <= 0) return "Syncing...";
+    const totalSeconds = Math.floor(ms / 1000);
+    const m = Math.floor(totalSeconds / 60);
+    const s = totalSeconds % 60;
+    return `in ${m} min ${s} sec`;
   };
 
   const formatNotificationTimeAgo = (isoString) => {
@@ -1364,19 +1398,19 @@ export default function App() {
             <div className="stat-left">
               <span className="stat-label">Next Sync</span>
               <div className="stat-value-container">
-                {isRefreshing ? (
+                {isRefreshing || nextSyncMs <= 0 ? (
                   <span className="stat-value success-text">
                     Syncing...
                   </span>
                 ) : (
                   <span className="stat-value success-text">
-                    in {Math.ceil(nextSyncMs / 60000)} min
+                    {formatCountdown(nextSyncMs)}
                   </span>
                 )}
-                {isRefreshing && <span className="pulse-dot" title="Sync in progress"></span>}
+                {(isRefreshing || nextSyncMs <= 0) && <span className="pulse-dot" title="Sync in progress"></span>}
               </div>
               <span className="stat-exact-time">
-                Automated weather cycle
+                {weatherCache.length > 0 ? `Next sync at ${getExactNextSyncTime()}` : 'Automated weather cycle'}
               </span>
             </div>
             <div className="stat-icon-monochrome">
