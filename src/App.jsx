@@ -1760,21 +1760,21 @@ export default function App() {
                   <img src="https://ik.imagekit.io/uwe3xp8ma/DynaMo/ChatGPT%20Image%20Jun%2025,%202026,%2002_19_38%20AM.png" alt="Beat the Heat" className="creative-info-img" />
                   <div className="how-creative-info">
                     <span className="how-creative-name">Beat the Heat</span>
-                    <span className="how-creative-trigger">Temperature ≥ 35°C</span>
+                    <span className="how-creative-trigger">Activates when temperature &ge; 35&deg;C. Checked first &mdash; takes priority over all other conditions.</span>
                   </div>
                 </div>
                 <div className="how-creative-row">
                   <img src="https://ik.imagekit.io/uwe3xp8ma/DynaMo/Rainy%20Day%20Pick-me-up%20creative" alt="Rainy Day Pick-me-up" className="creative-info-img" />
                   <div className="how-creative-info">
                     <span className="how-creative-name">Rainy Day Pick-me-up</span>
-                    <span className="how-creative-trigger">Rain detected</span>
+                    <span className="how-creative-trigger">Activates when precipitation &gt; 0mm OR weather code indicates rain, drizzle or storm. Only evaluated if temperature is below 35&deg;C.</span>
                   </div>
                 </div>
                 <div className="how-creative-row">
                   <img src="https://ik.imagekit.io/uwe3xp8ma/DynaMo/Refresh%20Anytime%20creative" alt="Refresh Anytime" className="creative-info-img" />
                   <div className="how-creative-info">
                     <span className="how-creative-name">Refresh Anytime</span>
-                    <span className="how-creative-trigger">Normal conditions</span>
+                    <span className="how-creative-trigger">Default creative. Activates when neither hot nor rainy conditions are detected.</span>
                   </div>
                 </div>
               </div>
