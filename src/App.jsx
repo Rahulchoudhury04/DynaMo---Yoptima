@@ -38,6 +38,29 @@ function getHeaderBgColor(condition, isDay) {
   return day ? '#065F46' : '#1B2B4B';
 }
 
+const WEATHER_IMAGES = {
+  Mumbai: {
+    hot: 'https://ik.imagekit.io/uwe3xp8ma/DynaMo/mumbai-hot.jpg',
+    rainy: 'https://ik.imagekit.io/uwe3xp8ma/DynaMo/mumbai-rainy.jpg',
+    normal: 'https://ik.imagekit.io/uwe3xp8ma/DynaMo/mumbai-normal.jpg'
+  },
+  Delhi: {
+    hot: 'https://ik.imagekit.io/uwe3xp8ma/DynaMo/delhi-hot.jpg',
+    rainy: 'https://ik.imagekit.io/uwe3xp8ma/DynaMo/delhi-rainy.jpg',
+    normal: 'https://ik.imagekit.io/uwe3xp8ma/DynaMo/delhi-normal.jpg'
+  },
+  Bangalore: {
+    hot: 'https://ik.imagekit.io/uwe3xp8ma/DynaMo/bangalore-hot.jpg',
+    rainy: 'https://ik.imagekit.io/uwe3xp8ma/DynaMo/bangalore-rainy.jpg',
+    normal: 'https://ik.imagekit.io/uwe3xp8ma/DynaMo/bangalore-normal.jpg'
+  },
+  Chennai: {
+    hot: 'https://ik.imagekit.io/uwe3xp8ma/DynaMo/chennai-hot.jpg',
+    rainy: 'https://ik.imagekit.io/uwe3xp8ma/DynaMo/chennai-rainy.jpg',
+    normal: 'https://ik.imagekit.io/uwe3xp8ma/DynaMo/chennai-normal.jpg'
+  }
+};
+
 function ImageThumbnail({ creativeName, conditionTrigger }) {
   const [hasError, setHasError] = useState(false);
 
@@ -1083,14 +1106,25 @@ export default function App() {
                 className={`city-card ${getCityCardStripe(weather)}`}
               >
                 {/* Header */}
-                <div className="card-header" style={{ height: '160px', padding: '20px', boxSizing: 'border-box', position: 'relative', overflow: 'hidden', backgroundColor: getHeaderBgColor(cond, getCityIsDay(weather)) }}>
-                  <WeatherScene condition={cond} isDay={getCityIsDay(weather)} />
-
+                <div 
+                  className="card-header" 
+                  style={{ 
+                    height: '160px', 
+                    padding: '20px', 
+                    boxSizing: 'border-box', 
+                    position: 'relative', 
+                    overflow: 'hidden', 
+                    backgroundImage: `linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.15)), url(${WEATHER_IMAGES[weather.city]?.[cond] || (WEATHER_IMAGES[weather.city] ? WEATHER_IMAGES[weather.city].normal : '')})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    color: '#FFFFFF'
+                  }}
+                >
                   <div className="header-top" style={{ position: 'relative', zIndex: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', width: '100%' }}>
-                    <span className="city-name" style={{ fontSize: '20px', fontWeight: 700 }}>{weather.city}</span>
+                    <span className="city-name" style={{ fontSize: '20px', fontWeight: 700, color: '#FFFFFF' }}>{weather.city}</span>
                     <div style={{ textAlign: 'right', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', marginRight: '40px' }}>
-                      <span className="temp-text" style={{ fontSize: '24px', fontWeight: 700 }}>{Math.round(weather.temperature)}°C</span>
-                      <span className="humidity-text" style={{ fontSize: '12px', color: 'rgba(255,255,255,0.7)', marginTop: '2px', fontWeight: 500 }}>
+                      <span className="temp-text" style={{ fontSize: '24px', fontWeight: 700, color: '#FFFFFF' }}>{Math.round(weather.temperature)}°C</span>
+                      <span className="humidity-text" style={{ fontSize: '12px', color: 'rgba(255,255,255,0.85)', marginTop: '2px', fontWeight: 500 }}>
                         Humidity {weather.humidity}%
                       </span>
                     </div>
@@ -1100,7 +1134,7 @@ export default function App() {
                       {cond}
                     </span>
                     {/* Reason text below the badge */}
-                    <div className="city-reason-text-new" style={{ fontSize: '12px', color: 'rgba(255,255,255,0.8)', textAlign: 'left', lineHeight: '1.35', fontWeight: 400 }}>
+                    <div className="city-reason-text-new" style={{ fontSize: '12px', color: 'rgba(255,255,255,0.9)', textAlign: 'left', lineHeight: '1.35', fontWeight: 400 }}>
                       {reasonText}
                     </div>
                   </div>
