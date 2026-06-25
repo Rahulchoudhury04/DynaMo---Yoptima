@@ -20,6 +20,7 @@ import {
   Flame,
   CloudRain,
   Sun,
+  Moon,
   CloudSun,
   Clock,
   Zap,
@@ -259,6 +260,27 @@ export default function App() {
   
   // Demo Mode state
   const [isDemoMode, setIsDemoMode] = useState(false);
+
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    const saved = localStorage.getItem('dynamo_theme');
+    return saved !== 'light'; // default to true (dark)
+  });
+
+  const toggleTheme = () => {
+    setIsDarkMode((prev) => {
+      const next = !prev;
+      localStorage.setItem('dynamo_theme', next ? 'dark' : 'light');
+      return next;
+    });
+  };
+
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    } else {
+      document.documentElement.setAttribute('data-theme', 'light');
+    }
+  }, [isDarkMode]);
 
   const dropdownRef = useRef(null);
   const notificationRef = useRef(null);
@@ -731,12 +753,12 @@ export default function App() {
 
   const getLogBorderColor = (log) => {
     if (log.old_state === 'active' && log.new_state === 'active') {
-      return '#E2E8F0'; // grey (no change)
+      return isDarkMode ? '#30363D' : '#D0D7DE'; // grey (no change)
     }
     const cond = getLogCondition(log).toLowerCase().trim();
-    if (cond === 'hot') return '#D97706'; // amber
-    if (cond === 'rainy') return '#2563EB'; // blue
-    return '#10B981'; // green
+    if (cond === 'hot') return '#F97316'; // hot
+    if (cond === 'rainy') return '#3B82F6'; // rainy
+    return '#22C55E'; // normal
   };
 
   const renderConditionBadge = (log) => {
@@ -933,7 +955,7 @@ export default function App() {
       {/* Top Navigation Bar */}
       <nav className="navbar">
         <div className="nav-left">
-          <span className="logo" style={{ fontSize: '20px', fontWeight: 700, color: '#1A1A2D', display: 'flex', alignItems: 'center', gap: '0.25rem', letterSpacing: '-0.025em' }}>
+          <span className="logo" style={{ fontSize: '20px', fontWeight: 700, color: 'var(--logo-text-color)', display: 'flex', alignItems: 'center', gap: '0.25rem', letterSpacing: '-0.025em' }}>
             DynaMo
             <span className="logo-icon" style={{ color: '#10B981', display: 'flex', alignItems: 'center' }}>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
@@ -1007,6 +1029,15 @@ export default function App() {
               </div>
             )}
           </div>
+
+          {/* Theme Toggle Button */}
+          <button 
+            onClick={toggleTheme} 
+            className="theme-toggle-btn"
+            title={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
+          >
+            {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
+          </button>
 
           <div className="user-avatar-trigger" onClick={(e) => { e.stopPropagation(); setIsUserDropdownOpen(!isUserDropdownOpen); setIsNotificationDropdownOpen(false); }}>
             <div className="avatar-circle">RC</div>
