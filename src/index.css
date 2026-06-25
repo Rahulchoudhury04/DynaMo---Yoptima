@@ -3073,3 +3073,108 @@ a {
     right: -16px;
   }
 }
+
+/* Historical View Styles */
+.live-sections-wrapper {
+  transition: opacity 0.4s ease, max-height 0.4s ease;
+  max-height: 5000px;
+  opacity: 1;
+  overflow: hidden;
+}
+
+.live-sections-wrapper.hidden {
+  opacity: 0;
+  max-height: 0;
+  pointer-events: none;
+}
+
+.historical-banner {
+  width: 100%;
+  padding: 0;
+  background-color: #EFF6FF;
+  border-bottom: 0 solid #BFDBFE;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: all 0.4s ease;
+}
+
+.historical-banner.visible {
+  max-height: 100px;
+  opacity: 1;
+  padding: 16px 24px;
+  border-bottom-width: 1px;
+}
+
+body.dark-mode .historical-banner {
+  background-color: #1E3A5F;
+  border-bottom-color: #1E3A8A;
+}
+
+.historical-banner-content {
+  width: 100%;
+  max-width: 1200px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.historical-banner-left {
+  display: flex;
+  align-items: center;
+  color: #1E40AF;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+body.dark-mode .historical-banner-left {
+  color: #93C5FD;
+}
+
+.historical-banner-reset {
+  background: transparent;
+  border: 1px solid #3B82F6;
+  color: #1D4ED8;
+  padding: 6px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+body.dark-mode .historical-banner-reset {
+  border-color: #3B82F6;
+  color: #BFDBFE;
+}
+
+.historical-banner-reset:hover {
+  background: rgba(59, 130, 246, 0.1);
+}
+
+.activity-date-picker {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid #E5E7EB;
+  background: #FFFFFF;
+  color: #111827;
+  font-family: inherit;
+  font-size: 14px;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+body.dark-mode .activity-date-picker {
+  background: #374151;
+  border-color: #4B5563;
+  color: #F9FAFB;
+  color-scheme: dark;
+}
+
+.activity-date-picker:focus {
+  border-color: #3B82F6;
+}
