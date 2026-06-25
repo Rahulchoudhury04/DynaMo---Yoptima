@@ -1399,15 +1399,15 @@ export default function App() {
                 </p>
                 <div className="creative-list-info">
                   <div className="creative-info-item">
-                    <img src="https://ik.imagekit.io/uwe3xp8ma/DynaMo/beat-the-heat-creative.png" alt="Beat the Heat" className="creative-info-img" />
+                    <img src="https://ik.imagekit.io/uwe3xp8ma/DynaMo/ChatGPT%20Image%20Jun%2025,%202026,%2002_19_38%20AM.png" alt="Beat the Heat" className="creative-info-img" />
                     <span className="creative-info-desc"><strong>Beat the Heat</strong> — activates when temperature ≥ 35°C</span>
                   </div>
                   <div className="creative-info-item">
-                    <img src="https://ik.imagekit.io/uwe3xp8ma/DynaMo/rainy-day-pick-me-up.png" alt="Rainy Day Pick-me-up" className="creative-info-img" />
+                    <img src="https://ik.imagekit.io/uwe3xp8ma/DynaMo/Rainy%20Day%20Pick-me-up%20creative" alt="Rainy Day Pick-me-up" className="creative-info-img" />
                     <span className="creative-info-desc"><strong>Rainy Day Pick-me-up</strong> — activates when rain is detected</span>
                   </div>
                   <div className="creative-info-item">
-                    <img src="https://ik.imagekit.io/uwe3xp8ma/DynaMo/refresh-anytime-creative.png" alt="Refresh Anytime" className="creative-info-img" />
+                    <img src="https://ik.imagekit.io/uwe3xp8ma/DynaMo/Refresh%20Anytime%20creative" alt="Refresh Anytime" className="creative-info-img" />
                     <span className="creative-info-desc"><strong>Refresh Anytime</strong> — activates during normal conditions</span>
                   </div>
                 </div>
@@ -1467,10 +1467,6 @@ export default function App() {
                   </div>
                 </div>
               </div>
-            </div>
-            
-            <div className="how-footer">
-              A YOptima Product
             </div>
           </div>
         </div>
