@@ -679,10 +679,13 @@ export default function App() {
     }
   };
 
-  // Filtered cities list
-  const filteredWeather = activeTab === 'All Cities' 
+  // Filtered cities list (sorted in a fixed order: Mumbai, Delhi, Bangalore, Chennai)
+  const CITY_ORDER = ['Mumbai', 'Delhi', 'Bangalore', 'Chennai'];
+  const filteredWeather = (activeTab === 'All Cities' 
     ? weatherCache 
-    : weatherCache.filter(w => w.city === activeTab);
+    : weatherCache.filter(w => w.city === activeTab))
+    .slice()
+    .sort((a, b) => CITY_ORDER.indexOf(a.city) - CITY_ORDER.indexOf(b.city));
 
   // Compute stat card metrics
   const activeLineItemsCount = lineItems.filter(item => item.state === 'active').length;
