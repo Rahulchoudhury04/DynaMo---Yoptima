@@ -1358,102 +1358,78 @@ export default function App() {
               <p className="platform-subtitle">
                 Everything your campaign stack needs — built for real-time, context-aware advertising
               </p>
-              <div className="platform-status-bar">
-                <span>Weather Triggers</span>
-                <span className="badge-live-green">Live</span>
-              </div>
             </div>
             
             <div className="platform-divider"></div>
             
-            <div className="platform-modal-body">
-              <div className="platform-grid">
-                {[
-                  {
-                    icon: '📋',
-                    title: 'Campaign Builder',
-                    description: 'Launch a new brand campaign with custom creatives, cities, triggers and budgets. Multi-brand support with isolated workspaces.',
-                    badge: 'Coming Soon',
-                    type: 'coming-soon'
-                  },
-                  {
-                    icon: '⚡',
-                    title: 'Trigger Builder',
-                    description: 'Build any trigger rule without code — weather, cricket scores, AQI, Nifty movements, traffic congestion, time of day.',
-                    badge: 'Coming Soon',
-                    type: 'coming-soon'
-                  },
-                  {
-                    icon: '💰',
-                    title: 'Budget Manager',
-                    description: 'Set daily spend caps per line item, auto-pause at limits, pace budgets across dayparts, get alerts at 80% spend.',
-                    badge: 'Coming Soon',
-                    type: 'coming-soon'
-                  },
-                  {
-                    icon: '🎛',
-                    title: 'Manual Override',
-                    description: 'Force activate or pause any line item instantly. Add a reason, set an expiry time. Full audit trail maintained.',
-                    badge: 'Coming Soon',
-                    type: 'coming-soon'
-                  },
-                  {
-                    icon: '🔔',
-                    title: 'Alert Center',
-                    description: 'WhatsApp and email alerts when conditions change, budgets hit limits, APIs fail, or creatives have been paused too long.',
-                    badge: 'Coming Soon',
-                    type: 'coming-soon'
-                  },
-                  {
-                    icon: '📊',
-                    title: 'Analytics',
-                    description: 'How long each creative ran, condition frequency per city, impression estimates, cost per condition, campaign ROI.',
-                    badge: 'Coming Soon',
-                    type: 'coming-soon'
-                  },
-                  {
-                    icon: '🎨',
-                    title: 'Creative Library',
-                    description: 'Upload and manage ad creatives directly in DynaMo. Tag each creative with trigger conditions. Preview before going live.',
-                    badge: 'Coming Soon',
-                    type: 'coming-soon'
-                  },
-                  {
-                    icon: '👥',
-                    title: 'Team Access',
-                    description: 'Invite team members with role-based permissions. CMO gets read-only view. Campaign managers get edit access. Full SSO support.',
-                    badge: 'Coming Soon',
-                    type: 'coming-soon'
-                  },
-                  {
-                    icon: '🔗',
-                    title: 'API & Webhooks',
-                    description: 'Connect DynaMo to Google Ads, Meta, DV360. Push state changes via webhooks to your existing ad stack in real time.',
-                    badge: 'Coming Soon',
-                    type: 'coming-soon'
-                  }
-                ].map((card, idx) => (
-                  <div key={idx} className="platform-card">
-                    <div>
-                      <div className="platform-card-icon-wrapper icon-purple">
-                        {card.icon}
-                      </div>
-                      <h3 className="platform-card-title">{card.title}</h3>
-                      <p className="platform-card-desc">{card.description}</p>
-                    </div>
-                    <div className="platform-card-footer">
-                      <span className="badge-coming-soon">{card.badge}</span>
-                    </div>
-                  </div>
-                ))}
+            {/* Live feature */}
+            <div className="platform-feature-item platform-feature-live">
+              <div className="platform-feature-icon">⚡</div>
+              <div className="platform-feature-content">
+                <div className="platform-feature-title-row">
+                  <span className="platform-feature-name">Weather Triggers</span>
+                  <span className="badge-live-green">Live</span>
+                </div>
+                <p className="platform-feature-desc">Real-time weather monitoring across cities. Auto-activates the right creative when conditions change.</p>
               </div>
             </div>
+
+            <div className="platform-divider"></div>
             
-            <div className="platform-modal-footer">
-              <span>Have a feature request?</span>
-              <a href="#" className="feedback-link" onClick={(e) => { e.preventDefault(); alert('Feedback workspace coming soon!'); }}>
-                Share feedback →
-              </a>
+            <div className="platform-modal-body">
+              {[
+                {
+                  icon: '📋',
+                  title: 'Campaign Builder',
+                  description: 'Launch campaigns with custom creatives, cities, triggers and budgets across isolated workspaces.'
+                },
+                {
+                  icon: '🎛',
+                  title: 'Trigger Builder',
+                  description: 'Build any trigger rule without code — weather, cricket scores, AQI, Nifty movements, traffic, time of day.'
+                },
+                {
+                  icon: '💰',
+                  title: 'Budget Manager',
+                  description: 'Set daily spend caps, auto-pause at limits, pace budgets across dayparts, alerts at 80% spend.'
+                },
+                {
+                  icon: '🔔',
+                  title: 'Alert Center',
+                  description: 'WhatsApp and email alerts when conditions change, budgets hit limits, or APIs fail.'
+                },
+                {
+                  icon: '📊',
+                  title: 'Analytics',
+                  description: 'Creative runtime, condition frequency per city, impression estimates, cost per condition, campaign ROI.'
+                },
+                {
+                  icon: '🎨',
+                  title: 'Creative Library',
+                  description: 'Upload and manage ad creatives directly. Tag with trigger conditions. Preview before going live.'
+                },
+                {
+                  icon: '👥',
+                  title: 'Team Access',
+                  description: 'Invite team members with role-based permissions. CMO read-only, campaign managers edit. Full SSO.'
+                },
+                {
+                  icon: '🔗',
+                  title: 'API & Webhooks',
+                  description: 'Connect to Google Ads, Meta, DV360. Push state changes via webhooks to your existing ad stack.'
+                }
+              ].map((feature, idx) => (
+                <div key={idx} className="platform-feature-item">
+                  <div className="platform-feature-icon">{feature.icon}</div>
+                  <div className="platform-feature-content">
+                    <div className="platform-feature-title-row">
+                      <span className="platform-feature-name">{feature.title}</span>
+                      <span className="badge-coming-soon">Coming Soon</span>
+                    </div>
+                    <p className="platform-feature-desc">{feature.description}</p>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
