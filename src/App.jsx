@@ -1595,7 +1595,7 @@ export default function App() {
                       <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-color)" />
                       <XAxis dataKey="city" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: 'var(--text-muted)' }} dy={10} />
                       <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: 'var(--text-muted)' }} />
-                      <RechartsTooltip cursor={{ fill: 'var(--bg-secondary)' }} contentStyle={{ borderRadius: '8px', border: '1px solid var(--border-color)', background: 'var(--bg-primary)', color: 'var(--text-primary)' }} />
+                      <RechartsTooltip cursor={{ fill: 'rgba(255, 255, 255, 0.05)' }} contentStyle={{ borderRadius: '8px', border: '1px solid var(--border-color)', background: 'var(--bg-primary)', color: 'var(--text-primary)', padding: '12px', whiteSpace: 'nowrap' }} />
                       <Legend iconType="square" wrapperStyle={{ fontSize: '12px', paddingTop: '20px' }} />
                       <Bar dataKey="Beat the Heat" name="Beat the Heat" fill={CHART_COLORS['Beat the Heat']} radius={[4, 4, 0, 0]} />
                       <Bar dataKey="Rainy Day Pick-me-up" name="Rainy Day" fill={CHART_COLORS['Rainy Day Pick-me-up']} radius={[4, 4, 0, 0]} />
@@ -1618,7 +1618,7 @@ export default function App() {
                       <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-color)" />
                       <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: 'var(--text-muted)' }} dy={10} />
                       <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: 'var(--text-muted)' }} />
-                      <RechartsTooltip contentStyle={{ borderRadius: '8px', border: '1px solid var(--border-color)', background: 'var(--bg-primary)', color: 'var(--text-primary)' }} />
+                      <RechartsTooltip contentStyle={{ borderRadius: '8px', border: '1px solid var(--border-color)', background: 'var(--bg-primary)', color: 'var(--text-primary)', padding: '12px', whiteSpace: 'nowrap' }} />
                       <Legend iconType="plainline" wrapperStyle={{ fontSize: '12px', paddingTop: '20px' }} />
                       <Line type="monotone" dataKey="Mumbai" stroke={CHART_COLORS.Mumbai} strokeWidth={2} dot={{ r: 4 }} activeDot={{ r: 6 }} />
                       <Line type="monotone" dataKey="Delhi" stroke={CHART_COLORS.Delhi} strokeWidth={2} dot={{ r: 4 }} activeDot={{ r: 6 }} />
@@ -1655,7 +1655,7 @@ export default function App() {
                       </Pie>
                       <RechartsTooltip 
                         formatter={(value, name, props) => [`${value} (${props.payload.percentage}%)`, name]}
-                        contentStyle={{ borderRadius: '8px', border: '1px solid var(--border-color)', background: 'var(--bg-primary)', color: 'var(--text-primary)' }} 
+                        contentStyle={{ borderRadius: '8px', border: '1px solid var(--border-color)', background: 'var(--bg-primary)', color: 'var(--text-primary)', padding: '12px', whiteSpace: 'nowrap' }} 
                       />
                       <Legend 
                         layout="horizontal" 
