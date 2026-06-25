@@ -797,8 +797,8 @@ export default function App() {
         borderRadius: '4px',
         fontSize: '11px',
         fontWeight: 600,
-        backgroundColor: isManual ? '#1E1B4B' : '#F3F4F6', // navy for manual, grey for system
-        color: isManual ? '#FFFFFF' : '#4B5563', // white text on navy, dark grey on grey
+        backgroundColor: isManual ? '#2563EB' : (isDarkMode ? '#374151' : '#F3F4F6'),
+        color: isManual ? '#FFFFFF' : (isDarkMode ? '#9CA3AF' : '#6B7280'),
         textAlign: 'center',
         width: '65px',
         boxSizing: 'border-box'
@@ -957,7 +957,7 @@ export default function App() {
         <div className="nav-left">
           <span className="logo" style={{ fontSize: '20px', fontWeight: 700, color: 'var(--logo-text-color)', display: 'flex', alignItems: 'center', gap: '0.25rem', letterSpacing: '-0.025em' }}>
             DynaMo
-            <span className="logo-icon" style={{ color: '#10B981', display: 'flex', alignItems: 'center' }}>
+            <span className="logo-icon" style={{ color: '#22C55E', display: 'flex', alignItems: 'center' }}>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M13 2L3 14H12L11 22L21 10H12L13 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
@@ -967,7 +967,7 @@ export default function App() {
 
         <div className="nav-center">
           <div className="campaign-pill">
-            <GlassWater size={15} style={{ color: '#2D2D8F' }} />
+            <GlassWater size={15} style={{ color: 'var(--campaign-pill-icon-color)' }} />
             <span>CoolSip — Summer 2026</span>
             <ChevronDown size={14} style={{ color: '#9CA3AF' }} />
           </div>
@@ -1236,7 +1236,7 @@ export default function App() {
           <div className="activity-header" style={{ padding: '20px 24px 12px 24px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
               <h2 className="activity-title" style={{ fontSize: '16px', fontWeight: 700, margin: 0, color: '#111827' }}>Recent Activity</h2>
-              <button className="view-all-link" onClick={() => setShowAllLogs(!showAllLogs)} style={{ fontSize: '14px', fontWeight: 600, color: '#2D2D8F', cursor: 'pointer' }}>
+              <button className="view-all-link" onClick={() => setShowAllLogs(!showAllLogs)} style={{ fontSize: '14px', fontWeight: 600, color: '#2563EB', cursor: 'pointer' }}>
                 <span>{showAllLogs ? 'Show Less' : 'View All Activity →'}</span>
               </button>
             </div>

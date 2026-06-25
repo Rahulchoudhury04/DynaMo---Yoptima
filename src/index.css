@@ -1,9 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap');
 
 :root {
-  --primary-navy: #2D2D8F;
-  --primary-navy-dark: #1E1E66;
-  --accent-green: #10B981;
+  --primary-navy: #2563EB;
+  --primary-navy-dark: #0F172A;
+  --accent-green: #22C55E;
 
   /* Default Theme: Dark Mode */
   --bg-app: #0D1117;
@@ -33,19 +33,21 @@
   
   --tabs-bg: #161B22;
   --tabs-border: #30363D;
-  --active-tab-bg: #1F6FEB;
+  --active-tab-bg: #2563EB;
   --active-tab-text: #FFFFFF;
   --inactive-tab-text: #8B949E;
   
-  --paused-pill-bg: #30363D;
-  --paused-pill-text: #8B949E;
+  --paused-pill-bg: #374151;
+  --paused-pill-text: #9CA3AF;
   
-  --logo-text-color: #F0F6FC;
-  --campaign-pill-bg: #21262D;
+  --logo-text-color: #FFFFFF;
+  --campaign-pill-bg: #1E2638;
   --campaign-pill-border: #30363D;
-  --campaign-pill-text: #F0F6FC;
+  --campaign-pill-text: #E5E7EB;
+  --campaign-pill-icon-color: #94A3B8;
   --creative-text: #E5E7EB;
   --navbar-btn-border: #30363D;
+  --navbar-icon-color: #94A3B8;
 
   --color-hot: #F59E0B;
   --color-rainy-day: #3B82F6;
@@ -93,19 +95,21 @@ html[data-theme="light"] {
   
   --tabs-bg: #FFFFFF;
   --tabs-border: #D0D7DE;
-  --active-tab-bg: #0969DA;
+  --active-tab-bg: #2563EB;
   --active-tab-text: #FFFFFF;
   --inactive-tab-text: #57606A;
   
   --paused-pill-bg: #F3F4F6;
   --paused-pill-text: #6B7280;
   
-  --logo-text-color: #1A1A2D;
+  --logo-text-color: #24292F;
   --campaign-pill-bg: #FFFFFF;
   --campaign-pill-border: #D0D7DE;
   --campaign-pill-text: #24292F;
+  --campaign-pill-icon-color: #57606A;
   --creative-text: #24292F;
   --navbar-btn-border: #D0D7DE;
+  --navbar-icon-color: #57606A;
 }
 
 * {
@@ -250,7 +254,7 @@ a {
   border-radius: 50%;
   border: 1px solid var(--navbar-btn-border);
   background-color: transparent;
-  color: var(--text-muted);
+  color: var(--navbar-icon-color);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -268,7 +272,7 @@ a {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--text-muted);
+  color: var(--navbar-icon-color);
   cursor: pointer;
   width: 36px;
   height: 36px;
@@ -378,7 +382,7 @@ a {
 .btn-view-all-activity {
   font-size: 13px;
   font-weight: 600;
-  color: #2D2D8F;
+  color: #2563EB;
   background: none;
   border: none;
   cursor: pointer;
@@ -401,7 +405,7 @@ a {
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background-color: #2D2D8F;
+  background-color: #2563EB;
   color: #FFFFFF;
   display: flex;
   align-items: center;
@@ -412,7 +416,7 @@ a {
 }
 
 .user-avatar-trigger:hover .avatar-circle {
-  box-shadow: 0 0 0 3px rgba(45, 45, 143, 0.25);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25);
 }
 
 /* User profile card dropdown */
@@ -444,7 +448,7 @@ a {
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  background-color: #2D2D8F;
+  background-color: #2563EB;
   color: #FFFFFF;
   display: flex;
   align-items: center;
@@ -967,7 +971,7 @@ a {
 .view-all-link {
   font-size: 14px;
   font-weight: 600;
-  color: #2D2D8F;
+  color: #2563EB;
   background: none;
   border: none;
   cursor: pointer;
@@ -1134,7 +1138,7 @@ a {
 .btn-load-more {
   font-size: 12px;
   font-weight: 600;
-  color: #2D2D8F;
+  color: #2563EB;
   background: none;
   border: none;
   cursor: pointer;
@@ -1210,7 +1214,7 @@ a {
 }
 
 .btn-notify-me {
-  background-color: #2D2D8F;
+  background-color: #2563EB;
   color: #FFFFFF;
   font-weight: 600;
   padding: 10px 24px;
@@ -1793,7 +1797,7 @@ a {
 .platform-title {
   font-size: 24px;
   font-weight: 800;
-  color: #2D2D8F;
+  color: #2563EB;
   margin-bottom: 6px;
   letter-spacing: -0.02em;
 }
@@ -1917,7 +1921,7 @@ a {
 }
 
 .feedback-link {
-  color: #2D2D8F;
+  color: #2563EB;
   font-weight: 600;
   display: flex;
   align-items: center;
@@ -1927,7 +1931,7 @@ a {
 }
 
 .feedback-link:hover {
-  color: #1E1E66;
+  color: #0F172A;
   text-decoration: underline;
 }
 
@@ -1981,7 +1985,7 @@ a {
 }
 
 .premium-loading-logo-icon {
-  color: #10B981;
+  color: #22C55E;
   display: flex;
   align-items: center;
 }
