@@ -638,19 +638,18 @@ a {
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  border: 1px solid #E5E7EB;
-  background-color: #FFFFFF;
+  border: none;
+  background-color: #22C55E;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #06B6D4;
+  color: #FFFFFF;
   cursor: pointer;
   transition: var(--transition-smooth);
 }
 
 .btn-refresh-stat:hover {
-  background-color: #ECFEFF;
-  border-color: #06B6D4;
+  background-color: #16A34A;
 }
 
 .btn-refresh-stat.spinning svg {
@@ -665,8 +664,15 @@ a {
   padding: 4px;
   display: flex;
   gap: 4px;
-  width: max-content;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
   box-sizing: border-box;
+  scrollbar-width: none;
+}
+
+.tabs-container::-webkit-scrollbar {
+  display: none;
 }
 
 .tab-button {

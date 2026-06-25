@@ -1175,10 +1175,7 @@ export default function App() {
                 </span>
               )}
             </div>
-            <div className="stat-right-action" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '12px' }}>
-              <div className="stat-icon-monochrome">
-                <Clock size={22} />
-              </div>
+            <div className="stat-right-action" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', justifyContent: 'flex-end', height: '100%' }}>
               <button 
                 className={`btn-refresh-stat ${isRefreshing ? 'spinning' : ''}`} 
                 onClick={handleManualRefresh}
