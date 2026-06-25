@@ -1015,6 +1015,17 @@ export default function App() {
             <Info size={20} />
           </button>
 
+          {/* Refresh / Sync Button — always visible in navbar */}
+          <button
+            className={`navbar-icon-btn navbar-refresh-btn ${isRefreshing ? 'spinning' : ''}`}
+            onClick={handleManualRefresh}
+            title="Sync weather now"
+            aria-label="Sync weather now"
+            disabled={isRefreshing}
+          >
+            <RefreshCw size={20} />
+          </button>
+
           {/* Theme Toggle Button */}
           <button 
             onClick={toggleTheme} 
@@ -1163,7 +1174,7 @@ export default function App() {
             </div>
           </div>
 
-          <div className="stat-card" style={{ alignItems: 'flex-start' }}>
+          <div className="stat-card">
             <div className="stat-left">
               <span className="stat-label">Last synced</span>
               <div className="stat-value-container">
@@ -1176,14 +1187,9 @@ export default function App() {
                 </span>
               )}
             </div>
-            <button 
-              className={`btn-refresh-stat ${isRefreshing ? 'spinning' : ''}`} 
-              onClick={handleManualRefresh}
-              title="Refresh weather data now"
-              disabled={isRefreshing}
-            >
-              <RefreshCw size={16} />
-            </button>
+            <div className="stat-icon-monochrome">
+              <Clock size={22} />
+            </div>
           </div>
         </section>
 

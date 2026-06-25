@@ -268,6 +268,28 @@ a {
   color: var(--text-main);
 }
 
+/* Navbar Refresh/Sync button — blue accent */
+.navbar-refresh-btn {
+  background-color: #2563EB !important;
+  border-color: #2563EB !important;
+  color: #FFFFFF !important;
+}
+
+.navbar-refresh-btn:hover {
+  background-color: #1D4ED8 !important;
+  border-color: #1D4ED8 !important;
+  color: #FFFFFF !important;
+}
+
+.navbar-refresh-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.navbar-refresh-btn.spinning svg {
+  animation: spin 1s linear infinite;
+}
+
 .notification-container {
   position: relative;
   display: flex;
