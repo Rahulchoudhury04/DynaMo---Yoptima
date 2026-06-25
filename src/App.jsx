@@ -238,6 +238,7 @@ export default function App() {
   });
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isNewCampaignOpen, setIsNewCampaignOpen] = useState(false);
+  const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
   const [isNotificationDropdownOpen, setIsNotificationDropdownOpen] = useState(false);
   const [showAllLogs, setShowAllLogs] = useState(false);
@@ -973,7 +974,7 @@ export default function App() {
           </div>
         </div>
 
-        <div className="nav-right" style={{ gap: '16px' }}>
+        <div className="nav-right">
           <button 
             className="btn-apps-grid" 
             onClick={() => setIsNewCampaignOpen(true)}
@@ -988,56 +989,15 @@ export default function App() {
             </svg>
           </button>
 
-          {/* Notification bell dropdown wrapper */}
-          <div className="notification-wrapper" ref={notificationRef} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-            <div className="notification-container" onClick={toggleNotifications}>
-              <Bell size={20} />
-              {unreadCount > 0 && <span className="bell-badge">{unreadCount}</span>}
-            </div>
-
-            {isNotificationDropdownOpen && (
-              <div className="notifications-dropdown">
-                <div className="notifications-header">
-                  <span>Notifications</span>
-                  <button 
-                    style={{ fontSize: '0.75rem', color: 'var(--text-muted)', cursor: 'pointer' }}
-                    onClick={(e) => { e.stopPropagation(); setLastOpenedNotificationsAt(Date.now()); }}
-                  >
-                    Mark all read
-                  </button>
-                </div>
-                <div className="notifications-list">
-                  {activeLogs.slice(0, 8).map((log) => (
-                    <div key={log.id} className="notification-item">
-                      {/* Left: Simplified text format "City: Creative name → Active/Paused" */}
-                      <span className="notification-desc">
-                        {log.city}: {log.creative_name} → {log.new_state === 'active' ? 'Active' : 'Paused'}
-                      </span>
-                      
-                      {/* Right: Time ago */}
-                      <span className="notification-time">
-                        {formatNotificationTimeAgo(log.created_at)}
-                      </span>
-                    </div>
-                  ))}
-                  {activeLogs.slice(0, 8).length === 0 && (
-                    <div style={{ padding: '1rem', textAlign: 'center', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                      No notifications yet
-                    </div>
-                  )}
-                </div>
-                {/* Bottom link */}
-                <div className="notifications-footer">
-                  <button 
-                    className="btn-view-all-activity"
-                    onClick={handleViewAllActivity}
-                  >
-                    View all activity →
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
+          {/* Info Button */}
+          <button 
+            className="btn-info-modal" 
+            onClick={() => setIsInfoModalOpen(true)}
+            title="How DynaMo Works"
+            aria-label="How DynaMo Works"
+          >
+            <span style={{ fontSize: '16px', fontWeight: 700, fontFamily: 'serif', fontStyle: 'italic' }}>i</span>
+          </button>
 
           {/* Theme Toggle Button */}
           <button 
@@ -1048,7 +1008,7 @@ export default function App() {
             {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
           </button>
 
-          <div className="user-avatar-trigger" onClick={(e) => { e.stopPropagation(); setIsUserDropdownOpen(!isUserDropdownOpen); setIsNotificationDropdownOpen(false); }}>
+          <div className="user-avatar-trigger" onClick={(e) => { e.stopPropagation(); setIsUserDropdownOpen(!isUserDropdownOpen); }}>
             <div className="avatar-circle">RC</div>
           </div>
 
@@ -1404,6 +1364,113 @@ export default function App() {
               <a href="#" className="feedback-link" onClick={(e) => { e.preventDefault(); alert('Feedback workspace coming soon!'); }}>
                 Share feedback →
               </a>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {isInfoModalOpen && (
+        <div className="modal-overlay" onClick={() => setIsInfoModalOpen(false)}>
+          <div className="how-it-works-modal" onClick={(e) => e.stopPropagation()}>
+            <button className="how-it-works-close-btn" onClick={() => setIsInfoModalOpen(false)} aria-label="Close modal">
+              <X size={18} />
+            </button>
+            
+            <div className="how-header">
+              <h2 className="how-modal-title">How DynaMo Works</h2>
+            </div>
+            
+            <div className="how-it-works-content">
+              {/* Section 1 */}
+              <div className="how-section">
+                <h3 className="how-heading">What is DynaMo?</h3>
+                <p className="how-text">
+                  DynaMo is a context-aware ad campaign manager. It automatically activates and pauses ad creatives based on real-world conditions — starting with live weather data across Indian cities.
+                </p>
+              </div>
+              
+              <div className="how-divider"></div>
+              
+              {/* Section 2 */}
+              <div className="how-section">
+                <h3 className="how-heading">The Current Campaign</h3>
+                <p className="how-text" style={{ marginBottom: '4px' }}>
+                  CoolSip is running a summer campaign across Mumbai, Delhi, Bangalore and Chennai with 3 creatives.
+                </p>
+                <div className="creative-list-info">
+                  <div className="creative-info-item">
+                    <img src="https://ik.imagekit.io/uwe3xp8ma/DynaMo/beat-the-heat-creative.png" alt="Beat the Heat" className="creative-info-img" />
+                    <span className="creative-info-desc"><strong>Beat the Heat</strong> — activates when temperature ≥ 35°C</span>
+                  </div>
+                  <div className="creative-info-item">
+                    <img src="https://ik.imagekit.io/uwe3xp8ma/DynaMo/rainy-day-pick-me-up.png" alt="Rainy Day Pick-me-up" className="creative-info-img" />
+                    <span className="creative-info-desc"><strong>Rainy Day Pick-me-up</strong> — activates when rain is detected</span>
+                  </div>
+                  <div className="creative-info-item">
+                    <img src="https://ik.imagekit.io/uwe3xp8ma/DynaMo/refresh-anytime-creative.png" alt="Refresh Anytime" className="creative-info-img" />
+                    <span className="creative-info-desc"><strong>Refresh Anytime</strong> — activates during normal conditions</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="how-divider"></div>
+              
+              {/* Section 3 */}
+              <div className="how-section">
+                <h3 className="how-heading">How the system works</h3>
+                <div className="flow-diagram">
+                  <div className="flow-step">Open-Meteo API</div>
+                  <div className="flow-arrow">→</div>
+                  <div className="flow-step">Weather Data</div>
+                  <div className="flow-arrow">→</div>
+                  <div className="flow-step">Decision Engine</div>
+                  <div className="flow-arrow">→</div>
+                  <div className="flow-step">Line Item Update</div>
+                  <div className="flow-arrow">→</div>
+                  <div className="flow-step">Dashboard</div>
+                </div>
+              </div>
+              
+              <div className="how-divider"></div>
+              
+              {/* Section 4 */}
+              <div className="how-section">
+                <h3 className="how-heading">Update Frequency</h3>
+                <ul className="how-list">
+                  <li>Weather data refreshes every 15 minutes automatically via server-side <code>pg_cron</code> scheduler.</li>
+                  <li>Manual refresh available anytime via the ↻ refresh button.</li>
+                  <li>All state changes logged with timestamp, reason, and trigger source.</li>
+                </ul>
+              </div>
+              
+              <div className="how-divider"></div>
+              
+              {/* Section 5 */}
+              <div className="how-section">
+                <h3 className="how-heading">Data Sources</h3>
+                <div className="sources-grid">
+                  <div className="source-item">
+                    <strong>Weather:</strong>
+                    <span>Open-Meteo API — free, no API key, global coverage</span>
+                  </div>
+                  <div className="source-item">
+                    <strong>Database:</strong>
+                    <span>Supabase PostgreSQL</span>
+                  </div>
+                  <div className="source-item">
+                    <strong>Scheduler:</strong>
+                    <span>Supabase pg_cron + Edge Functions</span>
+                  </div>
+                  <div className="source-item">
+                    <strong>Frontend:</strong>
+                    <span>React deployed on Vercel</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div className="how-footer">
+              A YOptima Product
             </div>
           </div>
         </div>

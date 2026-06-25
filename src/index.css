@@ -246,6 +246,26 @@ a {
   display: flex;
   align-items: center;
   position: relative;
+  gap: 12px;
+}
+
+.btn-info-modal {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--navbar-btn-border);
+  background-color: transparent;
+  color: var(--navbar-icon-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.btn-info-modal:hover {
+  background-color: var(--line-item-row-hover);
+  color: var(--text-main);
 }
 
 .btn-apps-grid {
@@ -2055,6 +2075,211 @@ a {
 }
 
 .theme-toggle-btn:hover {
+  background-color: var(--line-item-row-hover);
+  color: var(--text-main);
+}
+
+/* How It Works Modal Styling */
+.how-it-works-modal {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: 16px;
+  box-shadow: var(--shadow-lg), 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  width: 100%;
+  max-width: 600px;
+  max-height: 80vh;
+  padding: 32px;
+  position: relative;
+  animation: modalScaleUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.how-header {
+  padding-right: 40px;
+  margin-bottom: 24px;
+}
+
+.how-modal-title {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--text-main);
+  letter-spacing: -0.02em;
+}
+
+.how-it-works-content {
+  overflow-y: auto;
+  flex-grow: 1;
+  padding-right: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Scrollbar styling for body */
+.how-it-works-content::-webkit-scrollbar {
+  width: 6px;
+}
+.how-it-works-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+.how-it-works-content::-webkit-scrollbar-thumb {
+  background-color: var(--border-light);
+  border-radius: 3px;
+}
+
+.how-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.how-heading {
+  color: #2563EB;
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.how-text {
+  font-size: 14px;
+  color: var(--text-main);
+  line-height: 1.5;
+}
+
+.creative-list-info {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.creative-info-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.creative-info-img {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.creative-info-desc {
+  font-size: 13.5px;
+  color: var(--text-main);
+  line-height: 1.4;
+}
+
+.creative-info-desc strong {
+  font-weight: 700;
+}
+
+.flow-diagram {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin: 8px 0;
+}
+
+.flow-step {
+  background-color: var(--campaign-pill-bg); /* #1E2638 in dark, #F3F4F6 in light */
+  color: var(--text-main);
+  border: 1px solid var(--border-light);
+  border-radius: 20px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+  flex: 1;
+  min-width: 100px;
+  box-sizing: border-box;
+}
+
+.flow-arrow {
+  color: #94A3B8;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.how-list {
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.how-list li {
+  font-size: 14px;
+  color: var(--text-main);
+  line-height: 1.4;
+}
+
+.sources-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.source-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.source-item strong {
+  font-size: 13px;
+  color: var(--text-main);
+  font-weight: 700;
+}
+
+.source-item span {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.how-divider {
+  height: 1px;
+  background-color: var(--border-light);
+  width: 100%;
+}
+
+.how-footer {
+  text-align: center;
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 24px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.how-it-works-close-btn {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: var(--paused-pill-bg); /* #374151 in dark mode, #F3F4F6 in light mode */
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  z-index: 10;
+}
+
+.how-it-works-close-btn:hover {
   background-color: var(--line-item-row-hover);
   color: var(--text-main);
 }
