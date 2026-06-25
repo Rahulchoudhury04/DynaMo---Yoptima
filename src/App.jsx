@@ -1586,13 +1586,13 @@ export default function App() {
                 {chart1Data.every(c => c.HOT === 0 && c.RAINY === 0 && c.NORMAL === 0) ? (
                   <div className="chart-empty-state">No data available for this period</div>
                 ) : (
-                  <ResponsiveContainer width="100%" height={240}>
-                    <BarChart data={chart1Data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                  <ResponsiveContainer width="100%" height={280}>
+                    <BarChart data={chart1Data} margin={{ top: 10, right: 10, left: -25, bottom: 20 }}>
                       <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-color)" />
-                      <XAxis dataKey="city" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: 'var(--text-muted)' }} dy={10} />
-                      <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: 'var(--text-muted)' }} />
+                      <XAxis dataKey="city" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: 'var(--text-muted)' }} dy={10} />
+                      <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: 'var(--text-muted)' }} />
                       <RechartsTooltip cursor={{ fill: 'var(--bg-secondary)' }} contentStyle={{ borderRadius: '8px', border: '1px solid var(--border-color)', background: 'var(--bg-primary)', color: 'var(--text-primary)' }} />
-                      <Legend iconType="square" wrapperStyle={{ fontSize: '12px', paddingTop: '10px' }} />
+                      <Legend iconType="square" wrapperStyle={{ fontSize: '12px', paddingTop: '20px' }} />
                       <Bar dataKey="HOT" name="Hot" fill={CHART_COLORS.HOT} radius={[4, 4, 0, 0]} />
                       <Bar dataKey="RAINY" name="Rainy" fill={CHART_COLORS.RAINY} radius={[4, 4, 0, 0]} />
                       <Bar dataKey="NORMAL" name="Normal" fill={CHART_COLORS.NORMAL} radius={[4, 4, 0, 0]} />
@@ -1609,13 +1609,13 @@ export default function App() {
                 {chart2Data.every(c => c.Mumbai === 0 && c.Delhi === 0 && c.Bangalore === 0 && c.Chennai === 0) ? (
                   <div className="chart-empty-state">No data available for this period</div>
                 ) : (
-                  <ResponsiveContainer width="100%" height={240}>
-                    <LineChart data={chart2Data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                  <ResponsiveContainer width="100%" height={280}>
+                    <LineChart data={chart2Data} margin={{ top: 10, right: 10, left: -25, bottom: 20 }}>
                       <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-color)" />
-                      <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: 'var(--text-muted)' }} dy={10} />
-                      <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: 'var(--text-muted)' }} />
+                      <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: 'var(--text-muted)' }} dy={10} />
+                      <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: 'var(--text-muted)' }} />
                       <RechartsTooltip contentStyle={{ borderRadius: '8px', border: '1px solid var(--border-color)', background: 'var(--bg-primary)', color: 'var(--text-primary)' }} />
-                      <Legend iconType="plainline" wrapperStyle={{ fontSize: '12px', paddingTop: '10px' }} />
+                      <Legend iconType="plainline" wrapperStyle={{ fontSize: '12px', paddingTop: '20px' }} />
                       <Line type="monotone" dataKey="Mumbai" stroke={CHART_COLORS.Mumbai} strokeWidth={2} dot={{ r: 4 }} activeDot={{ r: 6 }} />
                       <Line type="monotone" dataKey="Delhi" stroke={CHART_COLORS.Delhi} strokeWidth={2} dot={{ r: 4 }} activeDot={{ r: 6 }} />
                       <Line type="monotone" dataKey="Bangalore" stroke={CHART_COLORS.Bangalore} strokeWidth={2} dot={{ r: 4 }} activeDot={{ r: 6 }} />
@@ -1633,14 +1633,14 @@ export default function App() {
                 {chart3Data.length === 0 ? (
                   <div className="chart-empty-state">No data available for this period</div>
                 ) : (
-                  <ResponsiveContainer width="100%" height={260}>
-                    <PieChart>
+                  <ResponsiveContainer width="100%" height={320}>
+                    <PieChart margin={{ top: 0, right: 0, left: 0, bottom: 20 }}>
                       <Pie
                         data={chart3Data}
                         cx="50%"
-                        cy="50%"
-                        innerRadius={60}
-                        outerRadius={85}
+                        cy="45%"
+                        innerRadius={65}
+                        outerRadius={90}
                         paddingAngle={2}
                         dataKey="value"
                         stroke="none"
@@ -1654,19 +1654,19 @@ export default function App() {
                         contentStyle={{ borderRadius: '8px', border: '1px solid var(--border-color)', background: 'var(--bg-primary)', color: 'var(--text-primary)' }} 
                       />
                       <Legend 
-                        layout="vertical" 
-                        verticalAlign="middle" 
-                        align="right"
-                        wrapperStyle={{ fontSize: '13px', lineHeight: '24px' }}
+                        layout="horizontal" 
+                        verticalAlign="bottom" 
+                        align="center"
+                        wrapperStyle={{ fontSize: '12px', lineHeight: '20px', paddingTop: '24px' }}
                         formatter={(value, entry) => {
                           const data = chart3Data.find(d => d.name === value);
                           return <span style={{ color: 'var(--text-primary)' }}>{value} <span style={{ color: 'var(--text-muted)', marginLeft: '4px' }}>{data?.value} ({data?.percentage}%)</span></span>;
                         }}
                       />
-                      <text x="50%" y="46%" textAnchor="middle" dominantBaseline="middle" style={{ fontSize: '24px', fontWeight: 700, fill: 'var(--text-primary)' }}>
+                      <text x="50%" y="41%" textAnchor="middle" dominantBaseline="middle" style={{ fontSize: '26px', fontWeight: 700, fill: 'var(--text-primary)' }}>
                         {totalActivations}
                       </text>
-                      <text x="50%" y="58%" textAnchor="middle" dominantBaseline="middle" style={{ fontSize: '12px', fill: 'var(--text-muted)', fontWeight: 500 }}>
+                      <text x="50%" y="53%" textAnchor="middle" dominantBaseline="middle" style={{ fontSize: '12px', fill: 'var(--text-muted)', fontWeight: 500 }}>
                         total activations
                       </text>
                     </PieChart>
