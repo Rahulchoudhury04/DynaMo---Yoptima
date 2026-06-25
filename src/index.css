@@ -943,6 +943,10 @@ a {
   font-weight: 400;
 }
 
+.line-item-row.active-row .creative-name {
+  font-weight: 700;
+}
+
 .status-pill {
   font-size: 12px;
   font-weight: 700;
