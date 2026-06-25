@@ -1023,7 +1023,7 @@ export default function App() {
         <section className="stats-grid">
           <div className="stat-card">
             <div className="stat-left">
-              <span className="stat-label">Active line items</span>
+              <span className="stat-label">Ads running</span>
               <span className="stat-value">{activeLineItemsCount}</span>
             </div>
             <div className="stat-icon-wrapper circle-green">
@@ -1033,7 +1033,7 @@ export default function App() {
 
           <div className="stat-card">
             <div className="stat-left">
-              <span className="stat-label">Cities monitored</span>
+              <span className="stat-label">Cities live</span>
               <span className="stat-value">4</span>
             </div>
             <div className="stat-icon-wrapper circle-blue">
@@ -1043,7 +1043,7 @@ export default function App() {
 
           <div className="stat-card">
             <div className="stat-left">
-              <span className="stat-label">Changes today</span>
+              <span className="stat-label">Switches today</span>
               <span className="stat-value">{changesTodayCount}</span>
             </div>
             <div className="stat-icon-wrapper circle-amber">
