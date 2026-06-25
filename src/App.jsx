@@ -236,37 +236,37 @@ function WeatherScene({ condition, isDay }) {
   }
 }
 
+// Onboarding Tour Steps (defined outside component to avoid re-creation)
+const TOUR_STEPS = [
+  {
+    targetId: 'tour-navbar',
+    title: 'Welcome to DynaMo',
+    description: "CoolSip's weather-triggered ad manager. This dashboard monitors live weather and auto-switches ad creatives across cities.",
+    position: 'bottom'
+  },
+  {
+    targetId: 'tour-cards',
+    title: 'Live Weather Cards',
+    description: 'These cards show live weather across Mumbai, Delhi, Bangalore, Chennai — each with the currently active creative.',
+    position: 'bottom'
+  },
+  {
+    targetId: 'tour-cards',
+    title: 'Auto-Switching Creatives',
+    description: 'The active creative in each city updates automatically every 15 minutes based on weather conditions.',
+    position: 'bottom'
+  },
+  {
+    targetId: 'tour-refresh',
+    title: 'Refresh Now',
+    description: 'Click this anytime to trigger an immediate weather check and creative update across all cities.',
+    position: 'bottom'
+  }
+];
+
 // Onboarding Tour Component
 function OnboardingTour({ step, onNext, onSkip }) {
   const [targetRect, setTargetRect] = useState(null);
-  
-  const TOUR_STEPS = [
-    {
-      targetId: 'tour-navbar',
-      title: 'Welcome to DynaMo',
-      description: "CoolSip's weather-triggered ad manager. This dashboard monitors live weather and auto-switches ad creatives across cities.",
-      position: 'bottom'
-    },
-    {
-      targetId: 'tour-cards',
-      title: 'Live Weather Cards',
-      description: 'These cards show live weather across Mumbai, Delhi, Bangalore, Chennai — each with the currently active creative.',
-      position: 'bottom'
-    },
-    {
-      targetId: 'tour-cards',
-      title: 'Auto-Switching Creatives',
-      description: 'The active creative in each city updates automatically every 15 minutes based on weather conditions.',
-      position: 'bottom'
-    },
-    {
-      targetId: 'tour-refresh',
-      title: 'Refresh Now',
-      description: 'Click this anytime to trigger an immediate weather check and creative update across all cities.',
-      position: 'bottom'
-    }
-  ];
-
   const currentStep = TOUR_STEPS[step - 1];
 
   useLayoutEffect(() => {
@@ -282,10 +282,9 @@ function OnboardingTour({ step, onNext, onSkip }) {
         viewportTop: rect.top,
         viewportLeft: rect.left
       });
-      // Scroll element into view if needed
       el.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
-  }, [step, currentStep]);
+  }, [step]); // only re-run when step number changes
 
   if (!currentStep || !targetRect) return null;
 
