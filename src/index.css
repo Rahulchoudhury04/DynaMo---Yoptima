@@ -1882,8 +1882,13 @@ a {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 18px;
   flex-shrink: 0;
+  color: var(--text-muted);
+}
+
+.platform-feature-icon.icon-live {
+  background-color: rgba(16, 185, 129, 0.12);
+  color: #10B981;
 }
 
 .platform-feature-content {

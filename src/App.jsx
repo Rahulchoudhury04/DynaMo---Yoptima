@@ -31,7 +31,13 @@ import {
   Info,
   PlayCircle,
   Menu,
-  ArrowRightLeft
+  ArrowRightLeft,
+  BarChart3,
+  Palette,
+  Users2,
+  Link2,
+  DollarSign,
+  SlidersHorizontal
 } from 'lucide-react';
 
 function getHeaderBgColor(condition, isDay) {
@@ -1364,7 +1370,7 @@ export default function App() {
             
             {/* Live feature */}
             <div className="platform-feature-item platform-feature-live">
-              <div className="platform-feature-icon">⚡</div>
+              <div className="platform-feature-icon icon-live"><Zap size={20} /></div>
               <div className="platform-feature-content">
                 <div className="platform-feature-title-row">
                   <span className="platform-feature-name">Weather Triggers</span>
@@ -1378,46 +1384,14 @@ export default function App() {
             
             <div className="platform-modal-body">
               {[
-                {
-                  icon: '📋',
-                  title: 'Campaign Builder',
-                  description: 'Launch campaigns with custom creatives, cities, triggers and budgets across isolated workspaces.'
-                },
-                {
-                  icon: '🎛',
-                  title: 'Trigger Builder',
-                  description: 'Build any trigger rule without code — weather, cricket scores, AQI, Nifty movements, traffic, time of day.'
-                },
-                {
-                  icon: '💰',
-                  title: 'Budget Manager',
-                  description: 'Set daily spend caps, auto-pause at limits, pace budgets across dayparts, alerts at 80% spend.'
-                },
-                {
-                  icon: '🔔',
-                  title: 'Alert Center',
-                  description: 'WhatsApp and email alerts when conditions change, budgets hit limits, or APIs fail.'
-                },
-                {
-                  icon: '📊',
-                  title: 'Analytics',
-                  description: 'Creative runtime, condition frequency per city, impression estimates, cost per condition, campaign ROI.'
-                },
-                {
-                  icon: '🎨',
-                  title: 'Creative Library',
-                  description: 'Upload and manage ad creatives directly. Tag with trigger conditions. Preview before going live.'
-                },
-                {
-                  icon: '👥',
-                  title: 'Team Access',
-                  description: 'Invite team members with role-based permissions. CMO read-only, campaign managers edit. Full SSO.'
-                },
-                {
-                  icon: '🔗',
-                  title: 'API & Webhooks',
-                  description: 'Connect to Google Ads, Meta, DV360. Push state changes via webhooks to your existing ad stack.'
-                }
+                { icon: <Rocket size={20} />, title: 'Campaign Builder', description: 'Launch campaigns with custom creatives, cities, triggers and budgets across isolated workspaces.' },
+                { icon: <SlidersHorizontal size={20} />, title: 'Trigger Builder', description: 'Build any trigger rule without code — weather, cricket scores, AQI, Nifty movements, traffic, time of day.' },
+                { icon: <DollarSign size={20} />, title: 'Budget Manager', description: 'Set daily spend caps, auto-pause at limits, pace budgets across dayparts, alerts at 80% spend.' },
+                { icon: <Bell size={20} />, title: 'Alert Center', description: 'WhatsApp and email alerts when conditions change, budgets hit limits, or APIs fail.' },
+                { icon: <BarChart3 size={20} />, title: 'Analytics', description: 'Creative runtime, condition frequency per city, impression estimates, cost per condition, campaign ROI.' },
+                { icon: <Palette size={20} />, title: 'Creative Library', description: 'Upload and manage ad creatives directly. Tag with trigger conditions. Preview before going live.' },
+                { icon: <Users2 size={20} />, title: 'Team Access', description: 'Invite team members with role-based permissions. CMO read-only, campaign managers edit. Full SSO.' },
+                { icon: <Link2 size={20} />, title: 'API & Webhooks', description: 'Connect to Google Ads, Meta, DV360. Push state changes via webhooks to your existing ad stack.' }
               ].map((feature, idx) => (
                 <div key={idx} className="platform-feature-item">
                   <div className="platform-feature-icon">{feature.icon}</div>
