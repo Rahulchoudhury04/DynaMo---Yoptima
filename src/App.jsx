@@ -402,12 +402,10 @@ export default function App() {
 
     // Transition logs matching initial seed
     const initialLogs = [
-      { id: 1, city: 'Mumbai', creative_name: 'Rainy Day Pick-me-up', old_state: 'paused', new_state: 'active', reason: 'Precipitation detected: 0.3mm in last 15 minutes', triggered_by: 'system', created_at: new Date(Date.now() - 1000 * 60 * 15).toISOString() },
-      { id: 2, city: 'Mumbai', creative_name: 'Refresh Anytime', old_state: 'active', new_state: 'paused', reason: 'Paused — condition changed to rainy', triggered_by: 'system', created_at: new Date(Date.now() - 1000 * 60 * 15).toISOString() },
-      { id: 3, city: 'Chennai', creative_name: 'Beat the Heat', old_state: 'paused', new_state: 'active', reason: 'Temperature rose to 36.5°C, above 35°C threshold', triggered_by: 'system', created_at: new Date(Date.now() - 1000 * 60 * 45).toISOString() },
-      { id: 4, city: 'Chennai', creative_name: 'Refresh Anytime', old_state: 'active', new_state: 'paused', reason: 'Paused — condition changed to hot', triggered_by: 'system', created_at: new Date(Date.now() - 1000 * 60 * 45).toISOString() },
-      { id: 5, city: 'Delhi', creative_name: 'Refresh Anytime', old_state: 'paused', new_state: 'active', reason: 'Conditions normal — temp 31.6°C, no precipitation detected', triggered_by: 'system', created_at: new Date(Date.now() - 1000 * 60 * 90).toISOString() },
-      { id: 6, city: 'Bangalore', creative_name: 'Refresh Anytime', old_state: 'paused', new_state: 'active', reason: 'Conditions normal — temp 21.3°C, no precipitation detected', triggered_by: 'system', created_at: new Date(Date.now() - 1000 * 60 * 120).toISOString() }
+      { id: 1, city: 'Mumbai', creative_name: 'Rainy Day Pick-me-up', condition: 'rainy', old_state: 'paused', new_state: 'active', reason: 'Precipitation detected: 0.3mm in last 15 minutes', triggered_by: 'system', created_at: new Date(Date.now() - 1000 * 60 * 15).toISOString() },
+      { id: 2, city: 'Chennai', creative_name: 'Beat the Heat', condition: 'hot', old_state: 'paused', new_state: 'active', reason: 'Temperature rose to 36.5°C, above 35°C threshold', triggered_by: 'system', created_at: new Date(Date.now() - 1000 * 60 * 45).toISOString() },
+      { id: 3, city: 'Delhi', creative_name: 'Refresh Anytime', condition: 'normal', old_state: 'paused', new_state: 'active', reason: 'Conditions normal — temp 31.6°C, no precipitation detected', triggered_by: 'system', created_at: new Date(Date.now() - 1000 * 60 * 90).toISOString() },
+      { id: 4, city: 'Bangalore', creative_name: 'Refresh Anytime', condition: 'normal', old_state: 'paused', new_state: 'active', reason: 'Conditions normal — temp 21.3°C, no precipitation detected', triggered_by: 'system', created_at: new Date(Date.now() - 1000 * 60 * 120).toISOString() }
     ];
 
     setWeatherCache(initialWeather);
@@ -473,47 +471,60 @@ export default function App() {
 
       for (const weather of newWeather) {
         const targetCondition = weather.condition;
+        const cityItems = updatedItems.filter(item => item.city === weather.city);
         
-        for (let j = 0; j < updatedItems.length; j++) {
-          const item = updatedItems[j];
-          if (item.city === weather.city) {
-            const shouldBeActive = item.condition_trigger === targetCondition;
-            const expectedState = shouldBeActive ? 'active' : 'paused';
+        // Find creative for target condition
+        const activeCreative = cityItems.find(item => item.condition_trigger === targetCondition);
+        if (!activeCreative) continue;
 
-            if (item.state !== expectedState) {
-              const oldState = item.state;
+        if (activeCreative.state === 'active') {
+          // No change case
+          newLogs.push({
+            id: Date.now() + Math.random(),
+            city: weather.city,
+            creative_name: activeCreative.creative_name,
+            condition: targetCondition,
+            old_state: 'active',
+            new_state: 'active',
+            reason: `No change — condition remains ${targetCondition} (${weather.temperature}°C)`,
+            triggered_by: triggeredBy,
+            created_at: new Date().toISOString()
+          });
+        } else {
+          // Change case
+          for (let j = 0; j < updatedItems.length; j++) {
+            const item = updatedItems[j];
+            if (item.city === weather.city) {
+              const expectedState = item.id === activeCreative.id ? 'active' : 'paused';
               updatedItems[j] = { ...item, state: expectedState };
-
-              // Determine log reason
-              let reason = '';
-              if (expectedState === 'active') {
-                if (targetCondition === 'hot') {
-                  reason = `Temperature rose to ${weather.temperature}°C, above 35°C threshold`;
-                } else if (targetCondition === 'rainy') {
-                  if (weather.precipitation > 0) {
-                    reason = `Precipitation detected: ${weather.precipitation}mm in last 15 minutes`;
-                  } else {
-                    reason = `Weather code ${weather.weather_code} detected — drizzle/rain/storm condition`;
-                  }
-                } else {
-                  reason = `Conditions normal — temp ${weather.temperature}°C, no precipitation detected`;
-                }
-              } else {
-                reason = `Paused — condition changed to ${targetCondition}`;
-              }
-
-              newLogs.push({
-                id: Date.now() + j,
-                city: item.city,
-                creative_name: item.creative_name,
-                old_state: oldState,
-                new_state: expectedState,
-                reason: reason,
-                triggered_by: triggeredBy,
-                created_at: new Date().toISOString()
-              });
             }
           }
+
+          // Determine log reason
+          let reason = '';
+          if (targetCondition === 'hot') {
+            reason = `Temperature rose to ${weather.temperature}°C, above 35°C threshold`;
+          } else if (targetCondition === 'rainy') {
+            if (weather.precipitation > 0) {
+              reason = `Precipitation detected: ${weather.precipitation}mm in last 15 minutes`;
+            } else {
+              reason = `Weather code ${weather.weather_code} detected — drizzle/rain/storm condition`;
+            }
+          } else {
+            reason = `Conditions normal — temp ${weather.temperature}°C, no precipitation detected`;
+          }
+
+          newLogs.push({
+            id: Date.now() + Math.random(),
+            city: weather.city,
+            creative_name: activeCreative.creative_name,
+            condition: targetCondition,
+            old_state: 'paused',
+            new_state: 'active',
+            reason: reason,
+            triggered_by: triggeredBy,
+            created_at: new Date().toISOString()
+          });
         }
       }
 
@@ -677,6 +688,68 @@ export default function App() {
     } else {
       return `Conditions normal — temp ${weather.temperature}°C, no precipitation detected`;
     }
+  };
+
+  const getLogCondition = (log) => {
+    if (log.condition) return log.condition;
+    if (log.creative_name === 'Beat the Heat') return 'hot';
+    if (log.creative_name === 'Rainy Day Pick-me-up') return 'rainy';
+    return 'normal';
+  };
+
+  const getLogBorderColor = (log) => {
+    if (log.old_state === 'active' && log.new_state === 'active') {
+      return '#E2E8F0'; // grey (no change)
+    }
+    const cond = getLogCondition(log).toLowerCase().trim();
+    if (cond === 'hot') return '#D97706'; // amber
+    if (cond === 'rainy') return '#2563EB'; // blue
+    return '#10B981'; // green
+  };
+
+  const renderConditionBadge = (log) => {
+    const cond = getLogCondition(log).toUpperCase().trim();
+    let bg = '#D1FAE5';
+    let text = '#10B981';
+    if (cond === 'HOT') {
+      bg = '#FEF3C7';
+      text = '#D97706';
+    } else if (cond === 'RAINY') {
+      bg = '#DBEAFE';
+      text = '#2563EB';
+    }
+    return (
+      <span style={{
+        display: 'inline-block',
+        padding: '2px 8px',
+        borderRadius: '4px',
+        fontSize: '11px',
+        fontWeight: 600,
+        backgroundColor: bg,
+        color: text,
+        textAlign: 'center',
+        width: '65px',
+        boxSizing: 'border-box'
+      }}>{cond}</span>
+    );
+  };
+
+  const renderTriggerBadge = (triggeredBy) => {
+    const isManual = String(triggeredBy || 'system').toLowerCase() === 'manual';
+    return (
+      <span style={{
+        display: 'inline-block',
+        padding: '2px 8px',
+        borderRadius: '4px',
+        fontSize: '11px',
+        fontWeight: 600,
+        backgroundColor: isManual ? '#1E1B4B' : '#F3F4F6', // navy for manual, grey for system
+        color: isManual ? '#FFFFFF' : '#4B5563', // white text on navy, dark grey on grey
+        textAlign: 'center',
+        width: '65px',
+        boxSizing: 'border-box'
+      }}>{isManual ? 'Manual' : 'System'}</span>
+    );
   };
 
   // Filtered cities list (sorted in a fixed order: Mumbai, Delhi, Bangalore, Chennai)
@@ -1072,40 +1145,25 @@ export default function App() {
               </div>
             ) : (
               (showAllLogs ? transitionLogs : transitionLogs.slice(0, 8)).map((log) => (
-                <div key={log.id} className="activity-row">
-                  {/* Col 1: Left accent bar */}
-                  <div className={`activity-left-accent ${getLogAccentClass(log)}`}></div>
-                  
-                  {/* Col 2: Spacer */}
-                  <div></div>
-                  
-                  {/* Col 3: City name */}
+                <div 
+                  key={log.id} 
+                  className="activity-row"
+                  style={{ borderLeft: `4px solid ${getLogBorderColor(log)}` }}
+                >
                   <span className="activity-city-name">{log.city}</span>
-                  
-                  {/* Col 4: Timestamp */}
                   <span className="activity-timestamp">{formatTime(log.created_at)}</span>
-                  
-                  {/* Col 5: Creative name + arrow + state */}
+                  <div className="activity-condition-badge-wrapper">
+                    {renderConditionBadge(log)}
+                  </div>
                   <div className="activity-creative-flow">
-                    <span className="activity-creative-name">{log.creative_name}</span>
-                    <span className="activity-flow-arrow">→</span>
-                    <span className={`activity-state-label state-${log.new_state}`}>
-                      {log.new_state === 'active' ? 'Active' : 'Paused'}
-                    </span>
+                    Ad running now: <strong>{log.creative_name}</strong>
                   </div>
-                  
-                  {/* Col 6: Reason text */}
-                  <span className="activity-reason-text">{log.reason}</span>
-                  
-                  {/* Col 7: Trigger pill */}
-                  <div style={{ display: 'flex', justifyContent: 'center' }}>
-                    <span className={`trigger-tag tag-${log.triggered_by || 'system'}`}>
-                      {log.triggered_by || 'system'}
-                    </span>
+                  <span className="activity-reason-text" title={log.reason}>
+                    {log.reason}
+                  </span>
+                  <div className="activity-trigger-wrapper">
+                    {renderTriggerBadge(log.triggered_by)}
                   </div>
-                  
-                  {/* Col 8: Spacer */}
-                  <div></div>
                 </div>
               ))
             )}

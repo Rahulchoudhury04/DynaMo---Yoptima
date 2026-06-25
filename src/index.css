@@ -941,128 +941,81 @@ a {
 }
 
 .activity-row {
-  display: grid;
-  grid-template-columns: 24px 20px 90px 70px 1fr 280px 80px 16px;
+  display: flex;
   align-items: center;
-  height: 48px;
-  border-bottom: 1px solid #F3F4F6;
+  padding: 12px 24px;
+  border-bottom: 1px solid #F1F5F9;
+  gap: 16px;
   font-size: 13px;
-  transition: var(--transition-smooth);
+  color: #334155;
+  background-color: #FFFFFF;
+  min-height: 48px;
   box-sizing: border-box;
 }
 
 .activity-row:hover {
-  background-color: #F9FAFB;
+  background-color: #F8FAFC;
 }
 
 .activity-row:last-child {
   border-bottom: none;
 }
 
-.activity-left-accent {
-  width: 4px;
-  height: 100%;
-  align-self: stretch;
-}
-
-.activity-left-accent.accent-paused {
-  background-color: #94A3B8;
-}
-
-.activity-left-accent.accent-hot {
-  background-color: var(--color-hot);
-}
-
-.activity-left-accent.accent-rainy {
-  background-color: var(--color-rainy-day);
-}
-
-.activity-left-accent.accent-normal {
-  background-color: var(--color-normal-day);
-}
-
 .activity-city-name {
+  width: 90px;
   font-weight: 700;
-  color: #111827;
+  color: #0F172A;
+  flex-shrink: 0;
   text-align: left;
-  font-size: 13px;
 }
 
 .activity-timestamp {
-  color: var(--text-muted);
+  width: 70px;
+  color: #94A3B8;
   font-size: 12px;
+  flex-shrink: 0;
   text-align: left;
+}
+
+.activity-condition-badge-wrapper {
+  width: 80px;
+  flex-shrink: 0;
+  display: flex;
+  justify-content: flex-start;
 }
 
 .activity-creative-flow {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  text-align: left;
-  min-width: 0;
-}
-
-.activity-creative-name {
-  font-size: 13px;
+  flex: 1;
   font-weight: 400;
-  color: #374151;
-  white-space: nowrap;
+  color: #334155;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: left;
 }
 
-.activity-flow-arrow {
-  color: #9CA3AF;
-  font-weight: 400;
-}
-
-.activity-state-label {
+.activity-creative-flow strong {
   font-weight: 700;
-  font-size: 13px;
-}
-
-.activity-state-label.state-active {
-  color: var(--state-active-text);
-}
-
-.activity-state-label.state-paused {
-  color: #6B7280;
+  color: #0F172A;
 }
 
 .activity-reason-text {
-  color: #6B7280;
-  font-size: 12px;
+  width: 220px;
+  color: #64748B;
   font-style: italic;
-  text-align: right;
-  white-space: nowrap;
+  flex-shrink: 0;
   overflow: hidden;
   text-overflow: ellipsis;
-  padding-left: 12px;
-  padding-right: 12px;
-  box-sizing: border-box;
+  white-space: nowrap;
+  text-align: left !important;
+  padding: 0 !important;
 }
 
-.trigger-tag {
-  font-size: 11px;
-  font-weight: 600;
-  text-transform: capitalize;
-  padding: 2px 8px;
-  border-radius: 9999px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 64px;
-  box-sizing: border-box;
-}
-
-.trigger-tag.tag-system {
-  background-color: #F3F4F6;
-  color: #4B5563;
-}
-
-.trigger-tag.tag-manual {
-  background-color: #EEEDFC;
-  color: #2D2D8F;
+.activity-trigger-wrapper {
+  width: 80px;
+  flex-shrink: 0;
+  display: flex;
+  justify-content: flex-end;
 }
 
 /* Empty State */

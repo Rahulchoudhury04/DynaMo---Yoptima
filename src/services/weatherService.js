@@ -153,40 +153,57 @@ export async function syncWeatherDirectly(triggeredBy = 'system') {
     const targetCondition = weather.condition;
     const cityItems = lineItems.filter(item => item.city === weather.city);
 
-    for (const item of cityItems) {
-      const shouldBeActive = item.condition_trigger === targetCondition;
-      const expectedState = shouldBeActive ? 'active' : 'paused';
+    // Find the creative that matches the target condition
+    const activeCreative = cityItems.find(item => item.condition_trigger === targetCondition);
+    
+    if (!activeCreative) continue;
 
-      if (item.state !== expectedState) {
-        itemsToUpdate.push({ id: item.id, state: expectedState });
-
-        let reason = '';
-        if (expectedState === 'active') {
-          if (targetCondition === 'hot') {
-            reason = `Temperature rose to ${weather.temperature}°C, above 35°C threshold`;
-          } else if (targetCondition === 'rainy') {
-            if (weather.precipitation > 0) {
-              reason = `Precipitation detected: ${weather.precipitation}mm in last 15 minutes`;
-            } else {
-              reason = `Weather code ${weather.weather_code} detected — drizzle/rain/storm condition`;
-            }
-          } else {
-            reason = `Conditions normal — temp ${weather.temperature}°C, no precipitation detected`;
-          }
-        } else {
-          reason = `Paused — condition changed to ${targetCondition}`;
+    if (activeCreative.state === 'active') {
+      // No change case
+      let reason = `No change — condition remains ${targetCondition} (${weather.temperature}°C)`;
+      logsToInsert.push({
+        city: weather.city,
+        creative_name: activeCreative.creative_name,
+        condition: targetCondition,
+        old_state: 'active',
+        new_state: 'active',
+        reason: reason,
+        triggered_by: triggeredBy,
+        created_at: new Date().toISOString()
+      });
+    } else {
+      // Change case
+      for (const item of cityItems) {
+        const expectedState = item.id === activeCreative.id ? 'active' : 'paused';
+        if (item.state !== expectedState) {
+          itemsToUpdate.push({ id: item.id, state: expectedState });
         }
-
-        logsToInsert.push({
-          city: item.city,
-          creative_name: item.creative_name,
-          old_state: item.state,
-          new_state: expectedState,
-          reason: reason,
-          triggered_by: triggeredBy,
-          created_at: new Date().toISOString()
-        });
       }
+
+      // Determine log reason
+      let reason = '';
+      if (targetCondition === 'hot') {
+        reason = `Temperature rose to ${weather.temperature}°C, above 35°C threshold`;
+      } else if (targetCondition === 'rainy') {
+        if (weather.precipitation > 0) {
+          reason = `Precipitation detected: ${weather.precipitation}mm in last 15 minutes`;
+        } else {
+          reason = `Weather code ${weather.weather_code} detected — drizzle/rain/storm condition`;
+        }
+      } else {
+        reason = `Conditions normal — temp ${weather.temperature}°C, no precipitation detected`;
+      }
+
+      logsToInsert.push({
+        city: weather.city,
+        creative_name: activeCreative.creative_name,
+        condition: targetCondition,
+        old_state: 'paused',
+        new_state: 'active',
+        reason: reason,
+        triggered_by: triggeredBy,
+        created_at: new Date().toISOString()
+      });
     }
   }
 

@@ -30,6 +30,7 @@ CREATE TABLE IF NOT EXISTS transition_logs (
     id SERIAL PRIMARY KEY,
     city TEXT NOT NULL,
     creative_name TEXT NOT NULL,
+    condition TEXT,
     old_state TEXT NOT NULL CHECK (old_state IN ('active', 'paused')),
     new_state TEXT NOT NULL CHECK (new_state IN ('active', 'paused')),
     reason TEXT NOT NULL,
@@ -78,6 +79,9 @@ WHERE NOT EXISTS (SELECT 1 FROM line_items);
 ALTER TABLE line_items ENABLE ROW LEVEL SECURITY;
 ALTER TABLE weather_cache ENABLE ROW LEVEL SECURITY;
 ALTER TABLE transition_logs ENABLE ROW LEVEL SECURITY;
+
+-- Migration to support condition field in transition_logs
+ALTER TABLE transition_logs ADD COLUMN IF NOT EXISTS condition TEXT;
 
 CREATE POLICY "Allow all operations on line_items" 
 ON line_items FOR ALL 
