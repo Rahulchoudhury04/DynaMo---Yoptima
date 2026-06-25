@@ -1943,9 +1943,89 @@ a {
   flex-shrink: 0;
 }
 
+/* How DynaMo Works — Creative list */
+.how-creatives-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-left: 54px; /* align with feature content (40px icon + 14px gap) */
+}
+
+.how-creative-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background-color: var(--line-item-row-hover);
+}
+
+.how-creative-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.how-creative-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.how-creative-trigger {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* How DynaMo Works — Flow chips */
+.how-flow-chips {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 6px;
+}
+
+.how-flow-chip {
+  background-color: var(--paused-pill-bg);
+  color: var(--text-main);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 5px 10px;
+  border-radius: 8px;
+  white-space: nowrap;
+}
+
+.how-flow-arrow {
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* How DynaMo Works — Source chips */
+.how-sources-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.how-source-chip {
+  background-color: var(--paused-pill-bg);
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: 8px;
+  white-space: nowrap;
+}
+
 @media (max-width: 580px) {
   .platform-modal-card {
     padding: 24px 16px;
+  }
+  .how-creatives-list {
+    padding-left: 0;
   }
 }
 

@@ -1411,99 +1411,119 @@ export default function App() {
 
       {isInfoModalOpen && (
         <div className="modal-overlay" onClick={() => setIsInfoModalOpen(false)}>
-          <div className="how-it-works-modal" onClick={(e) => e.stopPropagation()}>
-            <button className="how-it-works-close-btn" onClick={() => setIsInfoModalOpen(false)} aria-label="Close modal">
+          <div className="platform-modal-card" onClick={(e) => e.stopPropagation()}>
+            <button className="platform-close-btn" onClick={() => setIsInfoModalOpen(false)} aria-label="Close modal">
               <X size={18} />
             </button>
             
-            <div className="how-header">
-              <h2 className="how-modal-title">How DynaMo Works</h2>
+            <div className="platform-header">
+              <h2 className="platform-title">How DynaMo Works</h2>
+              <p className="platform-subtitle">
+                Context-aware ad campaign management — powered by real-time weather data
+              </p>
             </div>
             
-            <div className="how-it-works-content">
-              {/* Section 1 */}
-              <div className="how-section">
-                <h3 className="how-heading">What is DynaMo?</h3>
-                <p className="how-text">
-                  DynaMo is a context-aware ad campaign manager. It automatically activates and pauses ad creatives based on real-world conditions — starting with live weather data across Indian cities.
-                </p>
+            <div className="platform-divider"></div>
+
+            <div className="platform-modal-body">
+              {/* What is DynaMo */}
+              <div className="platform-feature-item">
+                <div className="platform-feature-icon icon-live"><Zap size={20} /></div>
+                <div className="platform-feature-content">
+                  <span className="platform-feature-name">What is DynaMo?</span>
+                  <p className="platform-feature-desc">
+                    A context-aware ad campaign manager that automatically activates and pauses ad creatives based on real-world conditions — starting with live weather data across Indian cities.
+                  </p>
+                </div>
               </div>
-              
-              <div className="how-divider"></div>
-              
-              {/* Section 2 */}
-              <div className="how-section">
-                <h3 className="how-heading">The Current Campaign</h3>
-                <p className="how-text" style={{ marginBottom: '4px' }}>
-                  CoolSip is running a summer campaign across Mumbai, Delhi, Bangalore and Chennai with 3 creatives.
-                </p>
-                <div className="creative-list-info">
-                  <div className="creative-info-item">
-                    <img src="https://ik.imagekit.io/uwe3xp8ma/DynaMo/ChatGPT%20Image%20Jun%2025,%202026,%2002_19_38%20AM.png" alt="Beat the Heat" className="creative-info-img" />
-                    <span className="creative-info-desc"><strong>Beat the Heat</strong> — activates when temperature ≥ 35°C</span>
+
+              <div className="platform-divider"></div>
+
+              {/* The Current Campaign */}
+              <div className="platform-feature-item">
+                <div className="platform-feature-icon"><Rocket size={20} /></div>
+                <div className="platform-feature-content">
+                  <div className="platform-feature-title-row">
+                    <span className="platform-feature-name">Current Campaign</span>
+                    <span className="badge-live-green">Live</span>
                   </div>
-                  <div className="creative-info-item">
-                    <img src="https://ik.imagekit.io/uwe3xp8ma/DynaMo/Rainy%20Day%20Pick-me-up%20creative" alt="Rainy Day Pick-me-up" className="creative-info-img" />
-                    <span className="creative-info-desc"><strong>Rainy Day Pick-me-up</strong> — activates when rain is detected</span>
+                  <p className="platform-feature-desc">
+                    CoolSip — Summer 2026 across Mumbai, Delhi, Bangalore and Chennai with 3 creatives:
+                  </p>
+                </div>
+              </div>
+
+              {/* Creative list */}
+              <div className="how-creatives-list">
+                <div className="how-creative-row">
+                  <img src="https://ik.imagekit.io/uwe3xp8ma/DynaMo/ChatGPT%20Image%20Jun%2025,%202026,%2002_19_38%20AM.png" alt="Beat the Heat" className="creative-info-img" />
+                  <div className="how-creative-info">
+                    <span className="how-creative-name">Beat the Heat</span>
+                    <span className="how-creative-trigger">Temperature ≥ 35°C</span>
                   </div>
-                  <div className="creative-info-item">
-                    <img src="https://ik.imagekit.io/uwe3xp8ma/DynaMo/Refresh%20Anytime%20creative" alt="Refresh Anytime" className="creative-info-img" />
-                    <span className="creative-info-desc"><strong>Refresh Anytime</strong> — activates during normal conditions</span>
+                </div>
+                <div className="how-creative-row">
+                  <img src="https://ik.imagekit.io/uwe3xp8ma/DynaMo/Rainy%20Day%20Pick-me-up%20creative" alt="Rainy Day Pick-me-up" className="creative-info-img" />
+                  <div className="how-creative-info">
+                    <span className="how-creative-name">Rainy Day Pick-me-up</span>
+                    <span className="how-creative-trigger">Rain detected</span>
+                  </div>
+                </div>
+                <div className="how-creative-row">
+                  <img src="https://ik.imagekit.io/uwe3xp8ma/DynaMo/Refresh%20Anytime%20creative" alt="Refresh Anytime" className="creative-info-img" />
+                  <div className="how-creative-info">
+                    <span className="how-creative-name">Refresh Anytime</span>
+                    <span className="how-creative-trigger">Normal conditions</span>
                   </div>
                 </div>
               </div>
-              
-              <div className="how-divider"></div>
-              
-              {/* Section 3 */}
-              <div className="how-section">
-                <h3 className="how-heading">How the system works</h3>
-                <div className="flow-diagram">
-                  <div className="flow-step">Open-Meteo API</div>
-                  <div className="flow-arrow">→</div>
-                  <div className="flow-step">Weather Data</div>
-                  <div className="flow-arrow">→</div>
-                  <div className="flow-step">Decision Engine</div>
-                  <div className="flow-arrow">→</div>
-                  <div className="flow-step">Line Item Update</div>
-                  <div className="flow-arrow">→</div>
-                  <div className="flow-step">Dashboard</div>
+
+              <div className="platform-divider"></div>
+
+              {/* System Flow */}
+              <div className="platform-feature-item">
+                <div className="platform-feature-icon"><Activity size={20} /></div>
+                <div className="platform-feature-content">
+                  <span className="platform-feature-name">How the System Works</span>
+                  <div className="how-flow-chips">
+                    <span className="how-flow-chip">Open-Meteo API</span>
+                    <span className="how-flow-arrow">→</span>
+                    <span className="how-flow-chip">Weather Data</span>
+                    <span className="how-flow-arrow">→</span>
+                    <span className="how-flow-chip">Decision Engine</span>
+                    <span className="how-flow-arrow">→</span>
+                    <span className="how-flow-chip">Line Item Update</span>
+                    <span className="how-flow-arrow">→</span>
+                    <span className="how-flow-chip">Dashboard</span>
+                  </div>
                 </div>
               </div>
-              
-              <div className="how-divider"></div>
-              
-              {/* Section 4 */}
-              <div className="how-section">
-                <h3 className="how-heading">Update Frequency</h3>
-                <ul className="how-list">
-                  <li>Weather data refreshes every 15 minutes automatically via server-side <code>pg_cron</code> scheduler.</li>
-                  <li>Manual refresh available anytime via the ↻ refresh button.</li>
-                  <li>All state changes logged with timestamp, reason, and trigger source.</li>
-                </ul>
+
+              <div className="platform-divider"></div>
+
+              {/* Update Frequency */}
+              <div className="platform-feature-item">
+                <div className="platform-feature-icon"><Clock size={20} /></div>
+                <div className="platform-feature-content">
+                  <span className="platform-feature-name">Update Frequency</span>
+                  <p className="platform-feature-desc">
+                    Weather refreshes every 15 min via <code style={{ fontSize: '12px', padding: '1px 5px', borderRadius: '4px', backgroundColor: 'var(--paused-pill-bg)', color: 'var(--text-muted)' }}>pg_cron</code>. Manual refresh anytime via navbar. All state changes logged with timestamp, reason, and trigger source.
+                  </p>
+                </div>
               </div>
-              
-              <div className="how-divider"></div>
-              
-              {/* Section 5 */}
-              <div className="how-section">
-                <h3 className="how-heading">Data Sources</h3>
-                <div className="sources-grid">
-                  <div className="source-item">
-                    <strong>Weather:</strong>
-                    <span>Open-Meteo API — free, no API key, global coverage</span>
-                  </div>
-                  <div className="source-item">
-                    <strong>Database:</strong>
-                    <span>Supabase PostgreSQL</span>
-                  </div>
-                  <div className="source-item">
-                    <strong>Scheduler:</strong>
-                    <span>Supabase pg_cron + Edge Functions</span>
-                  </div>
-                  <div className="source-item">
-                    <strong>Frontend:</strong>
-                    <span>React deployed on Vercel</span>
+
+              <div className="platform-divider"></div>
+
+              {/* Data Sources */}
+              <div className="platform-feature-item">
+                <div className="platform-feature-icon"><Cloud size={20} /></div>
+                <div className="platform-feature-content">
+                  <span className="platform-feature-name">Data Sources</span>
+                  <div className="how-sources-row">
+                    <span className="how-source-chip">Open-Meteo API</span>
+                    <span className="how-source-chip">Supabase PostgreSQL</span>
+                    <span className="how-source-chip">pg_cron + Edge Functions</span>
+                    <span className="how-source-chip">React on Vercel</span>
                   </div>
                 </div>
               </div>
