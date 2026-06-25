@@ -939,20 +939,24 @@ export default function App() {
   }, [transitionLogs, analyticsPeriod]);
 
   const chart1Data = React.useMemo(() => {
-    const dataByCity = { Mumbai: { HOT: 0, RAINY: 0, NORMAL: 0 }, Delhi: { HOT: 0, RAINY: 0, NORMAL: 0 }, Bangalore: { HOT: 0, RAINY: 0, NORMAL: 0 }, Chennai: { HOT: 0, RAINY: 0, NORMAL: 0 } };
+    const dataByCity = { 
+      Mumbai: { 'Beat the Heat': 0, 'Rainy Day Pick-me-up': 0, 'Refresh Anytime': 0 }, 
+      Delhi: { 'Beat the Heat': 0, 'Rainy Day Pick-me-up': 0, 'Refresh Anytime': 0 }, 
+      Bangalore: { 'Beat the Heat': 0, 'Rainy Day Pick-me-up': 0, 'Refresh Anytime': 0 }, 
+      Chennai: { 'Beat the Heat': 0, 'Rainy Day Pick-me-up': 0, 'Refresh Anytime': 0 } 
+    };
     analyticsLogs.forEach(log => {
       if (log.new_state === 'active') {
-        const cond = log.condition ? log.condition.toUpperCase() : 'NORMAL';
-        if (dataByCity[log.city] && dataByCity[log.city][cond] !== undefined) {
-          dataByCity[log.city][cond]++;
+        if (dataByCity[log.city] && dataByCity[log.city][log.creative_name] !== undefined) {
+          dataByCity[log.city][log.creative_name]++;
         }
       }
     });
     return CITY_ORDER.map(city => ({
       city,
-      HOT: dataByCity[city].HOT,
-      RAINY: dataByCity[city].RAINY,
-      NORMAL: dataByCity[city].NORMAL
+      'Beat the Heat': dataByCity[city]['Beat the Heat'],
+      'Rainy Day Pick-me-up': dataByCity[city]['Rainy Day Pick-me-up'],
+      'Refresh Anytime': dataByCity[city]['Refresh Anytime']
     }));
   }, [analyticsLogs]);
 
@@ -1579,11 +1583,11 @@ export default function App() {
           </div>
 
           <div className="analytics-grid" style={{ padding: '0 24px 24px 24px' }}>
-            {/* Chart 1: Weather Conditions Detected */}
+            {/* Chart 1: State-wise Creative Runs */}
             <div className="analytics-card">
-              <h3 className="analytics-chart-title">Weather Conditions Detected</h3>
+              <h3 className="analytics-chart-title">State-wise Creative Runs</h3>
               <div className="chart-container">
-                {chart1Data.every(c => c.HOT === 0 && c.RAINY === 0 && c.NORMAL === 0) ? (
+                {chart1Data.every(c => c['Beat the Heat'] === 0 && c['Rainy Day Pick-me-up'] === 0 && c['Refresh Anytime'] === 0) ? (
                   <div className="chart-empty-state">No data available for this period</div>
                 ) : (
                   <ResponsiveContainer width="100%" height={280}>
@@ -1593,9 +1597,9 @@ export default function App() {
                       <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: 'var(--text-muted)' }} />
                       <RechartsTooltip cursor={{ fill: 'var(--bg-secondary)' }} contentStyle={{ borderRadius: '8px', border: '1px solid var(--border-color)', background: 'var(--bg-primary)', color: 'var(--text-primary)' }} />
                       <Legend iconType="square" wrapperStyle={{ fontSize: '12px', paddingTop: '20px' }} />
-                      <Bar dataKey="HOT" name="Hot" fill={CHART_COLORS.HOT} radius={[4, 4, 0, 0]} />
-                      <Bar dataKey="RAINY" name="Rainy" fill={CHART_COLORS.RAINY} radius={[4, 4, 0, 0]} />
-                      <Bar dataKey="NORMAL" name="Normal" fill={CHART_COLORS.NORMAL} radius={[4, 4, 0, 0]} />
+                      <Bar dataKey="Beat the Heat" name="Beat the Heat" fill={CHART_COLORS['Beat the Heat']} radius={[4, 4, 0, 0]} />
+                      <Bar dataKey="Rainy Day Pick-me-up" name="Rainy Day" fill={CHART_COLORS['Rainy Day Pick-me-up']} radius={[4, 4, 0, 0]} />
+                      <Bar dataKey="Refresh Anytime" name="Refresh Anytime" fill={CHART_COLORS['Refresh Anytime']} radius={[4, 4, 0, 0]} />
                     </BarChart>
                   </ResponsiveContainer>
                 )}
