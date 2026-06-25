@@ -892,10 +892,17 @@ export default function App() {
   // showing only the row that activated the new creative, or new format status entries.
   const activeLogs = transitionLogs.filter(log => log.new_state === 'active');
 
-  // Filter activity logs by selected city tab
+  // Compute today's logs by condition type for summary pills
+  const todayLogs = activeLogs.filter(log => {
+    const logDate = new Date(log.created_at).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' });
+    const todayDate = new Date().toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' });
+    return logDate === todayDate;
+  });
+
+  // Filter activity logs by selected city tab (only showing today's logs)
   const filteredLogs = activeTab === 'All Cities'
-    ? activeLogs
-    : activeLogs.filter(log => log.city === activeTab);
+    ? todayLogs
+    : todayLogs.filter(log => log.city === activeTab);
 
   // Compute stat card metrics
   const activeLineItemsCount = lineItems.filter(item => item.state === 'active').length;
@@ -906,12 +913,7 @@ export default function App() {
     log => new Date(log.created_at).getTime() > lastOpenedNotificationsAt
   ).length;
 
-  // Compute today's logs by condition type for summary pills
-  const todayLogs = activeLogs.filter(log => {
-    const logDate = new Date(log.created_at).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' });
-    const todayDate = new Date().toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' });
-    return logDate === todayDate;
-  });
+
 
   const rainyEventsCount = todayLogs.filter(log => log.creative_name === 'Rainy Day Pick-me-up').length;
   const hotEventsCount = todayLogs.filter(log => log.creative_name === 'Beat the Heat').length;
@@ -1505,9 +1507,9 @@ export default function App() {
         <section id="recent-activity" className="activity-section">
           <div className="activity-header" style={{ padding: '20px 24px 12px 24px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
-              <h2 className="activity-title">Recent Activity</h2>
+              <h2 className="activity-title">Today's Activity</h2>
               <button className="view-all-link" onClick={() => setShowAllLogs(!showAllLogs)} style={{ fontSize: '14px', fontWeight: 600, color: '#2563EB', cursor: 'pointer' }}>
-                <span>{showAllLogs ? 'Show Less' : `View Last 50 →`}</span>
+                <span>{showAllLogs ? 'Show Less' : `View All (Today) →`}</span>
               </button>
             </div>
             <div style={{ fontSize: '13px', color: '#6B7280', margin: 0 }}>
@@ -1519,10 +1521,10 @@ export default function App() {
             {filteredLogs.length === 0 ? (
               <div className="activity-empty-state">
                 <Clock size={16} className="empty-icon" />
-                <span>No activity yet — waiting for first weather cycle</span>
+                <span>No activity yet today</span>
               </div>
             ) : (
-              (showAllLogs ? filteredLogs.slice(0, 50) : filteredLogs.slice(0, 8)).map((log) => (
+              (showAllLogs ? filteredLogs : filteredLogs.slice(0, 8)).map((log) => (
                 <div 
                   key={log.id} 
                   className="activity-row"
