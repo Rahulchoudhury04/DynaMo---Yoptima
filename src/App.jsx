@@ -1,5 +1,5 @@
 // src/App.jsx
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useLayoutEffect } from 'react';
 import { supabase } from './supabaseClient';
 import { seedLineItemsIfEmpty, triggerManualRefresh, syncWeatherDirectly } from './services/weatherService';
 import { 
@@ -236,6 +236,132 @@ function WeatherScene({ condition, isDay }) {
   }
 }
 
+// Onboarding Tour Component
+function OnboardingTour({ step, onNext, onSkip }) {
+  const [targetRect, setTargetRect] = useState(null);
+  
+  const TOUR_STEPS = [
+    {
+      targetId: 'tour-navbar',
+      title: 'Welcome to DynaMo',
+      description: "CoolSip's weather-triggered ad manager. This dashboard monitors live weather and auto-switches ad creatives across cities.",
+      position: 'bottom'
+    },
+    {
+      targetId: 'tour-cards',
+      title: 'Live Weather Cards',
+      description: 'These cards show live weather across Mumbai, Delhi, Bangalore, Chennai — each with the currently active creative.',
+      position: 'bottom'
+    },
+    {
+      targetId: 'tour-cards',
+      title: 'Auto-Switching Creatives',
+      description: 'The active creative in each city updates automatically every 15 minutes based on weather conditions.',
+      position: 'bottom'
+    },
+    {
+      targetId: 'tour-refresh',
+      title: 'Refresh Now',
+      description: 'Click this anytime to trigger an immediate weather check and creative update across all cities.',
+      position: 'bottom'
+    }
+  ];
+
+  const currentStep = TOUR_STEPS[step - 1];
+
+  useLayoutEffect(() => {
+    if (!currentStep) return;
+    const el = document.getElementById(currentStep.targetId);
+    if (el) {
+      const rect = el.getBoundingClientRect();
+      setTargetRect({
+        top: rect.top + window.scrollY,
+        left: rect.left + window.scrollX,
+        width: rect.width,
+        height: rect.height,
+        viewportTop: rect.top,
+        viewportLeft: rect.left
+      });
+      // Scroll element into view if needed
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }, [step, currentStep]);
+
+  if (!currentStep || !targetRect) return null;
+
+  // Calculate tooltip position
+  const tooltipStyle = {};
+  const padding = 12;
+  
+  if (currentStep.position === 'bottom') {
+    tooltipStyle.top = targetRect.viewportTop + targetRect.height + padding;
+    tooltipStyle.left = Math.max(16, Math.min(
+      targetRect.viewportLeft + targetRect.width / 2 - 160,
+      window.innerWidth - 336
+    ));
+  }
+
+  return (
+    <div className="tour-overlay" onClick={onSkip}>
+      {/* SVG overlay with cutout */}
+      <svg className="tour-svg-overlay" width="100%" height="100%">
+        <defs>
+          <mask id="tour-mask">
+            <rect x="0" y="0" width="100%" height="100%" fill="white" />
+            <rect
+              x={targetRect.viewportLeft - 6}
+              y={targetRect.viewportTop - 6}
+              width={targetRect.width + 12}
+              height={targetRect.height + 12}
+              rx="12"
+              fill="black"
+            />
+          </mask>
+        </defs>
+        <rect
+          x="0" y="0" width="100%" height="100%"
+          fill="rgba(0,0,0,0.65)"
+          mask="url(#tour-mask)"
+        />
+        {/* Spotlight ring */}
+        <rect
+          x={targetRect.viewportLeft - 6}
+          y={targetRect.viewportTop - 6}
+          width={targetRect.width + 12}
+          height={targetRect.height + 12}
+          rx="12"
+          fill="none"
+          stroke="rgba(37, 99, 235, 0.5)"
+          strokeWidth="2"
+          className="tour-spotlight-ring"
+        />
+      </svg>
+
+      {/* Tooltip */}
+      <div
+        className="tour-tooltip"
+        style={tooltipStyle}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="tour-tooltip-step">Step {step} of 4</div>
+        <h3 className="tour-tooltip-title">{currentStep.title}</h3>
+        <p className="tour-tooltip-desc">{currentStep.description}</p>
+        <div className="tour-tooltip-footer">
+          <button className="tour-btn-skip" onClick={onSkip}>Skip</button>
+          <div className="tour-dots">
+            {[1, 2, 3, 4].map(i => (
+              <span key={i} className={`tour-dot ${i === step ? 'active' : ''}`} />
+            ))}
+          </div>
+          <button className="tour-btn-next" onClick={onNext}>
+            {step >= 4 ? 'Got it!' : 'Next'}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function App() {
   // Data states
   const [lineItems, setLineItems] = useState([]);
@@ -257,6 +383,10 @@ export default function App() {
   const [lastSyncedTimeAgo, setLastSyncedTimeAgo] = useState('never');
   const [lastOpenedNotificationsAt, setLastOpenedNotificationsAt] = useState(0);
   
+  // Onboarding tour state
+  const [showTour, setShowTour] = useState(false);
+  const [tourStep, setTourStep] = useState(0);
+  
   // Error/loading states
   const [isInitialized, setIsInitialized] = useState(false);
   const [supabaseError, setSupabaseError] = useState(false);
@@ -270,6 +400,33 @@ export default function App() {
     }, 800);
     return () => clearInterval(interval);
   }, [isInitialized]);
+
+  // Auto-trigger onboarding tour for first-time users
+  useEffect(() => {
+    if (isInitialized && !supabaseError && !localStorage.getItem('dynamo_tour_completed')) {
+      const timer = setTimeout(() => {
+        setTourStep(1);
+        setShowTour(true);
+      }, 800);
+      return () => clearTimeout(timer);
+    }
+  }, [isInitialized, supabaseError]);
+
+  const handleTourNext = () => {
+    if (tourStep >= 4) {
+      setShowTour(false);
+      setTourStep(0);
+      localStorage.setItem('dynamo_tour_completed', 'true');
+    } else {
+      setTourStep(prev => prev + 1);
+    }
+  };
+
+  const handleTourSkip = () => {
+    setShowTour(false);
+    setTourStep(0);
+    localStorage.setItem('dynamo_tour_completed', 'true');
+  };
   
   // Demo Mode state
   const [isDemoMode, setIsDemoMode] = useState(false);
@@ -982,7 +1139,7 @@ export default function App() {
       )}
 
       {/* Top Navigation Bar */}
-      <nav className="navbar">
+      <nav className="navbar" id="tour-navbar">
         <div className="nav-left" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <span className="logo" style={{ fontSize: '20px', fontWeight: 700, color: 'var(--logo-text-color)', display: 'flex', alignItems: 'center', gap: '0.25rem', letterSpacing: '-0.025em' }}>
             DynaMo
@@ -1028,6 +1185,7 @@ export default function App() {
 
           {/* Refresh / Sync Button — always visible in navbar */}
           <button
+            id="tour-refresh"
             className={`navbar-icon-btn navbar-refresh-btn ${isRefreshing ? 'spinning' : ''}`}
             onClick={handleManualRefresh}
             title="Sync weather now"
@@ -1218,7 +1376,7 @@ export default function App() {
         </section>
 
         {/* City Cards Grid - changes layout dynamically if filtered */}
-        <section className={activeTab === 'All Cities' ? 'cards-grid' : 'single-card-container'}>
+        <section id="tour-cards" className={activeTab === 'All Cities' ? 'cards-grid' : 'single-card-container'}>
           {filteredWeather.map((weather) => {
             const cityItems = lineItems.filter(item => item.city === weather.city);
             // Fetch most recent transition log reason for this city
@@ -1536,6 +1694,15 @@ export default function App() {
         <div className="toast-notification">
           Link copied!
         </div>
+      )}
+
+      {/* Onboarding Tour */}
+      {showTour && tourStep > 0 && (
+        <OnboardingTour 
+          step={tourStep} 
+          onNext={handleTourNext} 
+          onSkip={handleTourSkip} 
+        />
       )}
     </div>
   );
