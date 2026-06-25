@@ -1507,7 +1507,7 @@ export default function App() {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
               <h2 className="activity-title">Recent Activity</h2>
               <button className="view-all-link" onClick={() => setShowAllLogs(!showAllLogs)} style={{ fontSize: '14px', fontWeight: 600, color: '#2563EB', cursor: 'pointer' }}>
-                <span>{showAllLogs ? 'Show Less' : 'View All Activity →'}</span>
+                <span>{showAllLogs ? 'Show Less' : `View Last 50 →`}</span>
               </button>
             </div>
             <div style={{ fontSize: '13px', color: '#6B7280', margin: 0 }}>
@@ -1522,7 +1522,7 @@ export default function App() {
                 <span>No activity yet — waiting for first weather cycle</span>
               </div>
             ) : (
-              (showAllLogs ? filteredLogs : filteredLogs.slice(0, 8)).map((log) => (
+              (showAllLogs ? filteredLogs.slice(0, 50) : filteredLogs.slice(0, 8)).map((log) => (
                 <div 
                   key={log.id} 
                   className="activity-row"
