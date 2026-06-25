@@ -1,5 +1,5 @@
 // src/App.jsx
-import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { supabase } from './supabaseClient';
 import { seedLineItemsIfEmpty, triggerManualRefresh, syncWeatherDirectly } from './services/weatherService';
 import { 
@@ -236,166 +236,6 @@ function WeatherScene({ condition, isDay }) {
   }
 }
 
-// Onboarding Tour Steps (defined outside component to avoid re-creation)
-const TOUR_STEPS = [
-  {
-    targetId: 'tour-navbar',
-    title: 'Welcome to DynaMo',
-    description: "CoolSip's weather-triggered ad manager. This dashboard monitors live weather and auto-switches ad creatives across cities.",
-    position: 'bottom'
-  },
-  {
-    targetId: 'tour-cards',
-    title: 'Live Weather Cards',
-    description: 'These cards show live weather across Mumbai, Delhi, Bangalore, Chennai — each with the currently active creative.',
-    position: 'bottom'
-  },
-  {
-    targetId: 'tour-cards',
-    title: 'Auto-Switching Creatives',
-    description: 'The active creative in each city updates automatically every 15 minutes based on weather conditions.',
-    position: 'bottom'
-  },
-  {
-    targetId: 'tour-refresh',
-    title: 'Refresh Now',
-    description: 'Click this anytime to trigger an immediate weather check and creative update across all cities.',
-    position: 'bottom'
-  }
-];
-
-// Onboarding Tour Component
-function OnboardingTour({ step, onNext, onSkip }) {
-  const [targetRect, setTargetRect] = useState(null);
-  const currentStep = TOUR_STEPS[step - 1];
-
-  useLayoutEffect(() => {
-    if (!currentStep) return;
-    const el = document.getElementById(currentStep.targetId);
-    if (el) {
-      const rect = el.getBoundingClientRect();
-      setTargetRect({
-        top: rect.top + window.scrollY,
-        left: rect.left + window.scrollX,
-        width: rect.width,
-        height: rect.height,
-        viewportTop: rect.top,
-        viewportLeft: rect.left
-      });
-      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
-  }, [step]); // only re-run when step number changes
-
-  if (!currentStep || !targetRect) return null;
-
-  const isMobile = window.innerWidth <= 580;
-
-  // Step icons for mobile bottom sheet
-  const stepIcons = ['⚡', '🌦️', '🔄', '🔁'];
-
-  // Desktop: calculate tooltip position
-  const tooltipStyle = {};
-  if (!isMobile) {
-    const padding = 12;
-    const tooltipHeight = 200;
-    
-    tooltipStyle.left = Math.max(16, Math.min(
-      targetRect.viewportLeft + targetRect.width / 2 - 160,
-      window.innerWidth - 336
-    ));
-
-    const bottomPos = targetRect.viewportTop + targetRect.height + padding;
-    if (bottomPos + tooltipHeight > window.innerHeight) {
-      tooltipStyle.top = Math.max(padding, targetRect.viewportTop + padding);
-    } else {
-      tooltipStyle.top = bottomPos;
-    }
-  }
-
-  // Mobile: bottom sheet layout (no spotlight)
-  if (isMobile) {
-    return (
-      <div className="tour-overlay tour-mobile" onClick={onSkip}>
-        <div className="tour-mobile-sheet" onClick={(e) => e.stopPropagation()}>
-          <div className="tour-mobile-handle" />
-          <div className="tour-mobile-icon">{stepIcons[step - 1]}</div>
-          <div className="tour-tooltip-step">Step {step} of 4</div>
-          <h3 className="tour-tooltip-title">{currentStep.title}</h3>
-          <p className="tour-tooltip-desc">{currentStep.description}</p>
-          <div className="tour-tooltip-footer">
-            <button className="tour-btn-skip" onClick={onSkip}>Skip</button>
-            <div className="tour-dots">
-              {[1, 2, 3, 4].map(i => (
-                <span key={i} className={`tour-dot ${i === step ? 'active' : ''}`} />
-              ))}
-            </div>
-            <button className="tour-btn-next" onClick={onNext}>
-              {step >= 4 ? 'Got it!' : 'Next'}
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Desktop: spotlight + tooltip
-  return (
-    <div className="tour-overlay" onClick={onSkip}>
-      <svg className="tour-svg-overlay" width="100%" height="100%">
-        <defs>
-          <mask id="tour-mask">
-            <rect x="0" y="0" width="100%" height="100%" fill="white" />
-            <rect
-              x={targetRect.viewportLeft - 6}
-              y={targetRect.viewportTop - 6}
-              width={targetRect.width + 12}
-              height={targetRect.height + 12}
-              rx="12"
-              fill="black"
-            />
-          </mask>
-        </defs>
-        <rect
-          x="0" y="0" width="100%" height="100%"
-          fill="rgba(0,0,0,0.65)"
-          mask="url(#tour-mask)"
-        />
-        <rect
-          x={targetRect.viewportLeft - 6}
-          y={targetRect.viewportTop - 6}
-          width={targetRect.width + 12}
-          height={targetRect.height + 12}
-          rx="12"
-          fill="none"
-          stroke="rgba(37, 99, 235, 0.5)"
-          strokeWidth="2"
-          className="tour-spotlight-ring"
-        />
-      </svg>
-
-      <div
-        className="tour-tooltip"
-        style={tooltipStyle}
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="tour-tooltip-step">Step {step} of 4</div>
-        <h3 className="tour-tooltip-title">{currentStep.title}</h3>
-        <p className="tour-tooltip-desc">{currentStep.description}</p>
-        <div className="tour-tooltip-footer">
-          <button className="tour-btn-skip" onClick={onSkip}>Skip</button>
-          <div className="tour-dots">
-            {[1, 2, 3, 4].map(i => (
-              <span key={i} className={`tour-dot ${i === step ? 'active' : ''}`} />
-            ))}
-          </div>
-          <button className="tour-btn-next" onClick={onNext}>
-            {step >= 4 ? 'Got it!' : 'Next'}
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 export default function App() {
   // Data states
@@ -418,9 +258,24 @@ export default function App() {
   const [lastSyncedTimeAgo, setLastSyncedTimeAgo] = useState('never');
   const [lastOpenedNotificationsAt, setLastOpenedNotificationsAt] = useState(0);
   
-  // Onboarding tour state
-  const [showTour, setShowTour] = useState(false);
-  const [tourStep, setTourStep] = useState(0);
+  // Next sync countdown state
+  const [nextSyncMs, setNextSyncMs] = useState(15 * 60 * 1000); // 15 mins default
+
+  // Next Sync Countdown Effect
+  useEffect(() => {
+    if (isRefreshing) return; // Pause while syncing
+    
+    const interval = setInterval(() => {
+      setNextSyncMs(prev => (prev >= 1000 ? prev - 1000 : 0));
+    }, 1000);
+    
+    return () => clearInterval(interval);
+  }, [isRefreshing]);
+
+  // Reset countdown after successful sync
+  useEffect(() => {
+    setNextSyncMs(15 * 60 * 1000);
+  }, [weatherCache]);
   
   // Error/loading states
   const [isInitialized, setIsInitialized] = useState(false);
@@ -435,33 +290,6 @@ export default function App() {
     }, 800);
     return () => clearInterval(interval);
   }, [isInitialized]);
-
-  // Auto-trigger onboarding tour for first-time users
-  useEffect(() => {
-    if (isInitialized && !supabaseError && !localStorage.getItem('dynamo_tour_completed')) {
-      const timer = setTimeout(() => {
-        setTourStep(1);
-        setShowTour(true);
-      }, 800);
-      return () => clearTimeout(timer);
-    }
-  }, [isInitialized, supabaseError]);
-
-  const handleTourNext = () => {
-    if (tourStep >= 4) {
-      setShowTour(false);
-      setTourStep(0);
-      localStorage.setItem('dynamo_tour_completed', 'true');
-    } else {
-      setTourStep(prev => prev + 1);
-    }
-  };
-
-  const handleTourSkip = () => {
-    setShowTour(false);
-    setTourStep(0);
-    localStorage.setItem('dynamo_tour_completed', 'true');
-  };
   
   // Demo Mode state
   const [isDemoMode, setIsDemoMode] = useState(false);
@@ -1029,12 +857,8 @@ export default function App() {
     : activeLogs.filter(log => log.city === activeTab);
 
   // Compute stat card metrics
-  const activeLineItemsCount = lineItems.filter(item => item.state === 'active').length;
-  const changesTodayCount = activeLogs.filter(log => {
-    const logDate = new Date(log.created_at).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' });
-    const todayDate = new Date().toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' });
-    return logDate === todayDate;
-  }).length;
+  const activeLineItemsCount = activeItems.length;
+
 
   // Compute unread notifications count
   const unreadCount = activeLogs.filter(
@@ -1174,7 +998,7 @@ export default function App() {
       )}
 
       {/* Top Navigation Bar */}
-      <nav className="navbar" id="tour-navbar">
+      <nav className="navbar">
         <div className="nav-left" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <span className="logo" style={{ fontSize: '20px', fontWeight: 700, color: 'var(--logo-text-color)', display: 'flex', alignItems: 'center', gap: '0.25rem', letterSpacing: '-0.025em' }}>
             DynaMo
@@ -1220,7 +1044,6 @@ export default function App() {
 
           {/* Refresh / Sync Button — always visible in navbar */}
           <button
-            id="tour-refresh"
             className={`navbar-icon-btn navbar-refresh-btn ${isRefreshing ? 'spinning' : ''}`}
             onClick={handleManualRefresh}
             title="Sync weather now"
@@ -1370,16 +1193,6 @@ export default function App() {
 
           <div className="stat-card">
             <div className="stat-left">
-              <span className="stat-label">Switches today</span>
-              <span className="stat-value">{changesTodayCount}</span>
-            </div>
-            <div className="stat-icon-monochrome">
-              <ArrowRightLeft size={22} />
-            </div>
-          </div>
-
-          <div className="stat-card">
-            <div className="stat-left">
               <span className="stat-label">Last synced</span>
               <div className="stat-value-container">
                 <span className="stat-value success-text">{lastSyncedTimeAgo}</span>
@@ -1390,6 +1203,30 @@ export default function App() {
                   Last synced at {getExactLastSyncedTime()}
                 </span>
               )}
+            </div>
+            <div className="stat-icon-monochrome">
+              <Clock size={22} />
+            </div>
+          </div>
+
+          <div className="stat-card">
+            <div className="stat-left">
+              <span className="stat-label">Next Sync</span>
+              <div className="stat-value-container">
+                {isRefreshing ? (
+                  <span className="stat-value success-text">
+                    Syncing...
+                  </span>
+                ) : (
+                  <span className="stat-value success-text">
+                    in {Math.ceil(nextSyncMs / 60000)} min
+                  </span>
+                )}
+                {isRefreshing && <span className="pulse-dot" title="Sync in progress"></span>}
+              </div>
+              <span className="stat-exact-time">
+                Automated weather cycle
+              </span>
             </div>
             <div className="stat-icon-monochrome">
               <Clock size={22} />
@@ -1411,7 +1248,7 @@ export default function App() {
         </section>
 
         {/* City Cards Grid - changes layout dynamically if filtered */}
-        <section id="tour-cards" className={activeTab === 'All Cities' ? 'cards-grid' : 'single-card-container'}>
+        <section className={activeTab === 'All Cities' ? 'cards-grid' : 'single-card-container'}>
           {filteredWeather.map((weather) => {
             const cityItems = lineItems.filter(item => item.city === weather.city);
             // Fetch most recent transition log reason for this city
@@ -1489,7 +1326,7 @@ export default function App() {
               </button>
             </div>
             <div style={{ fontSize: '13px', color: '#6B7280', margin: 0 }}>
-              {changesTodayCount} state changes today
+              Live updates via Open-Meteo
             </div>
           </div>
           
@@ -1731,14 +1568,6 @@ export default function App() {
         </div>
       )}
 
-      {/* Onboarding Tour */}
-      {showTour && tourStep > 0 && (
-        <OnboardingTour 
-          step={tourStep} 
-          onNext={handleTourNext} 
-          onSkip={handleTourSkip} 
-        />
-      )}
     </div>
   );
 }
