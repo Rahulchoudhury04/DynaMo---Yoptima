@@ -3080,6 +3080,10 @@ a {
   max-height: 5000px;
   opacity: 1;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
 }
 
 .live-sections-wrapper.hidden {
