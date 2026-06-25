@@ -27,7 +27,9 @@ import {
   Rocket,
   Settings,
   HelpCircle,
-  Cloud
+  Cloud,
+  Info,
+  PlayCircle
 } from 'lucide-react';
 
 function getHeaderBgColor(condition, isDay) {
@@ -955,7 +957,7 @@ export default function App() {
 
       {/* Top Navigation Bar */}
       <nav className="navbar">
-        <div className="nav-left">
+        <div className="nav-left" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <span className="logo" style={{ fontSize: '20px', fontWeight: 700, color: 'var(--logo-text-color)', display: 'flex', alignItems: 'center', gap: '0.25rem', letterSpacing: '-0.025em' }}>
             DynaMo
             <span className="logo-icon" style={{ color: '#22C55E', display: 'flex', alignItems: 'center' }}>
@@ -964,19 +966,18 @@ export default function App() {
               </svg>
             </span>
           </span>
-        </div>
-
-        <div className="nav-center">
+          <span className="nav-separator" style={{ color: 'var(--border-light)', fontSize: '18px', fontWeight: 300 }}>/</span>
           <div className="campaign-pill">
-            <GlassWater size={15} style={{ color: 'var(--campaign-pill-icon-color)' }} />
+            <GlassWater size={13} style={{ color: 'var(--campaign-pill-icon-color)' }} />
             <span>CoolSip — Summer 2026</span>
-            <ChevronDown size={14} style={{ color: '#9CA3AF' }} />
+            <ChevronDown size={12} style={{ color: 'var(--navbar-icon-color)' }} />
           </div>
         </div>
 
         <div className="nav-right">
+          {/* Apps Grid Button */}
           <button 
-            className="btn-apps-grid" 
+            className="navbar-icon-btn" 
             onClick={() => setIsNewCampaignOpen(true)}
             title="DynaMo Platform"
             aria-label="DynaMo Platform"
@@ -991,26 +992,32 @@ export default function App() {
 
           {/* Info Button */}
           <button 
-            className="btn-info-modal" 
+            className="navbar-icon-btn" 
             onClick={() => setIsInfoModalOpen(true)}
             title="How DynaMo Works"
             aria-label="How DynaMo Works"
           >
-            <span style={{ fontSize: '16px', fontWeight: 700, fontFamily: 'serif', fontStyle: 'italic' }}>i</span>
+            <Info size={20} />
           </button>
 
           {/* Theme Toggle Button */}
           <button 
             onClick={toggleTheme} 
-            className="theme-toggle-btn"
+            className="navbar-icon-btn"
             title={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
           >
             {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
           </button>
 
-          <div className="user-avatar-trigger" onClick={(e) => { e.stopPropagation(); setIsUserDropdownOpen(!isUserDropdownOpen); }}>
-            <div className="avatar-circle">RC</div>
-          </div>
+          {/* User Button */}
+          <button 
+            className="navbar-icon-btn" 
+            onClick={(e) => { e.stopPropagation(); setIsUserDropdownOpen(!isUserDropdownOpen); }}
+            title="User Profile"
+            aria-label="User Profile"
+          >
+            <User size={20} />
+          </button>
 
           {/* User profile dropdown card */}
           {isUserDropdownOpen && (
@@ -1058,8 +1065,8 @@ export default function App() {
               <span className="stat-label">Ads running</span>
               <span className="stat-value">{activeLineItemsCount}</span>
             </div>
-            <div className="stat-icon-wrapper circle-green">
-              <FileText size={20} />
+            <div className="stat-icon-monochrome">
+              <PlayCircle size={22} />
             </div>
           </div>
 
@@ -1068,8 +1075,8 @@ export default function App() {
               <span className="stat-label">Cities live</span>
               <span className="stat-value">4</span>
             </div>
-            <div className="stat-icon-wrapper circle-blue">
-              <MapPin size={20} />
+            <div className="stat-icon-monochrome">
+              <MapPin size={22} />
             </div>
           </div>
 
@@ -1078,8 +1085,8 @@ export default function App() {
               <span className="stat-label">Switches today</span>
               <span className="stat-value">{changesTodayCount}</span>
             </div>
-            <div className="stat-icon-wrapper circle-amber">
-              <TrendingUp size={20} />
+            <div className="stat-icon-monochrome">
+              <RefreshCw size={22} />
             </div>
           </div>
 
@@ -1096,7 +1103,10 @@ export default function App() {
                 </span>
               )}
             </div>
-            <div className="stat-right-action">
+            <div className="stat-right-action" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '12px' }}>
+              <div className="stat-icon-monochrome">
+                <Clock size={22} />
+              </div>
               <button 
                 className={`btn-refresh-stat ${isRefreshing ? 'spinning' : ''}`} 
                 onClick={handleManualRefresh}

@@ -208,13 +208,13 @@ a {
 .campaign-pill {
   background-color: var(--campaign-pill-bg);
   border: 1px solid var(--campaign-pill-border);
-  border-radius: 24px;
-  padding: 8px 20px;
+  border-radius: 6px;
+  padding: 4px 8px;
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  font-size: 14px;
-  font-weight: 600;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 500;
   color: var(--campaign-pill-text);
   cursor: pointer;
   transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
@@ -236,8 +236,8 @@ a {
 }
 
 .campaign-pill span {
-  font-size: 14px;
-  font-weight: 600;
+  font-size: 13px;
+  font-weight: 500;
   color: var(--campaign-pill-text);
   letter-spacing: -0.01em;
 }
@@ -249,7 +249,7 @@ a {
   gap: 12px;
 }
 
-.btn-info-modal {
+.navbar-icon-btn {
   width: 36px;
   height: 36px;
   border-radius: 50%;
@@ -263,26 +263,7 @@ a {
   transition: var(--transition-smooth);
 }
 
-.btn-info-modal:hover {
-  background-color: var(--line-item-row-hover);
-  color: var(--text-main);
-}
-
-.btn-apps-grid {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  border: 1px solid var(--navbar-btn-border);
-  background-color: transparent;
-  color: var(--navbar-icon-color);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: var(--transition-smooth);
-}
-
-.btn-apps-grid:hover {
+.navbar-icon-btn:hover {
   background-color: var(--line-item-row-hover);
   color: var(--text-main);
 }
@@ -645,34 +626,12 @@ a {
   margin-top: 2px;
 }
 
-.stat-icon-wrapper {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
+.stat-icon-monochrome {
+  color: var(--navbar-icon-color);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-}
-
-.stat-icon-wrapper.circle-green {
-  background-color: #ECFDF5;
-  color: #10B981;
-}
-
-.stat-icon-wrapper.circle-blue {
-  background-color: #EFF6FF;
-  color: #3B82F6;
-}
-
-.stat-icon-wrapper.circle-amber {
-  background-color: #FFFBEB;
-  color: #F59E0B;
-}
-
-.stat-icon-wrapper.circle-teal {
-  background-color: #ECFEFF;
-  color: #06B6D4;
 }
 
 .btn-refresh-stat {
