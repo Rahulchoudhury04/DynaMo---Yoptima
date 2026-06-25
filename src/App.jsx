@@ -291,13 +291,20 @@ function OnboardingTour({ step, onNext, onSkip }) {
   // Calculate tooltip position
   const tooltipStyle = {};
   const padding = 12;
+  const tooltipHeight = 200; // approximate tooltip height
   
-  if (currentStep.position === 'bottom') {
-    tooltipStyle.top = targetRect.viewportTop + targetRect.height + padding;
-    tooltipStyle.left = Math.max(16, Math.min(
-      targetRect.viewportLeft + targetRect.width / 2 - 160,
-      window.innerWidth - 336
-    ));
+  // Center horizontally relative to target
+  tooltipStyle.left = Math.max(16, Math.min(
+    targetRect.viewportLeft + targetRect.width / 2 - 160,
+    window.innerWidth - 336
+  ));
+
+  // If placing below target would overflow viewport, position inside top of target
+  const bottomPos = targetRect.viewportTop + targetRect.height + padding;
+  if (bottomPos + tooltipHeight > window.innerHeight) {
+    tooltipStyle.top = Math.max(padding, targetRect.viewportTop + padding);
+  } else {
+    tooltipStyle.top = bottomPos;
   }
 
   return (
