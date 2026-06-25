@@ -269,25 +269,43 @@ export default function App() {
   const [isExporting, setIsExporting] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
 
-  // Next Sync Countdown Effect
+  // Unified Next Sync and Last Synced Countdown Effect
   useEffect(() => {
-    if (isRefreshing || weatherCache.length === 0) {
+    if (weatherCache.length === 0) {
+      setLastSyncedTimeAgo('never');
       if (isRefreshing) setNextSyncMs(0);
       return;
     }
     
-    const updateCountdown = () => {
+    const updateTimers = () => {
       const timestamps = weatherCache.map(w => w && w.fetched_at ? new Date(w.fetched_at).getTime() : NaN).filter(t => !isNaN(t));
       if (timestamps.length === 0) return;
       const latestTime = Math.max(...timestamps);
-      const nextSyncTime = latestTime + 15 * 60 * 1000;
-      const diffMs = nextSyncTime - Date.now();
+      const now = Date.now();
       
-      setNextSyncMs(diffMs > 0 ? diffMs : 0);
+      const elapsedMs = now - latestTime;
+      const remainingMs = (15 * 60 * 1000) - elapsedMs;
+      
+      // Update Last Synced elapsed time
+      const elapsedSec = Math.floor(elapsedMs / 1000);
+      if (elapsedSec < 0) {
+        setLastSyncedTimeAgo('just now');
+      } else {
+        const m = Math.floor(elapsedSec / 60);
+        const s = elapsedSec % 60;
+        setLastSyncedTimeAgo(`${m} min ${s} sec ago`);
+      }
+      
+      // Update Next Sync remaining time
+      if (isRefreshing) {
+        setNextSyncMs(0);
+      } else {
+        setNextSyncMs(remainingMs > 0 ? remainingMs : 0);
+      }
     };
 
-    updateCountdown();
-    const interval = setInterval(updateCountdown, 1000);
+    updateTimers();
+    const interval = setInterval(updateTimers, 1000);
     
     return () => clearInterval(interval);
   }, [weatherCache, isRefreshing]);
@@ -442,32 +460,7 @@ export default function App() {
     return () => clearInterval(interval);
   }, [isInitialized, supabaseError, isDemoMode]);
 
-  // Calculate Last Synced relative time dynamically
-  useEffect(() => {
-    if (weatherCache.length === 0) {
-      setLastSyncedTimeAgo('never');
-      return;
-    }
-
-    const updateTimeAgo = () => {
-      // Find the latest fetched_at timestamp
-      const timestamps = weatherCache.map(w => new Date(w.fetched_at).getTime());
-      const latestTime = Math.max(...timestamps);
-      const diffMs = Date.now() - latestTime;
-      const diffMin = Math.floor(diffMs / 60000);
-
-      if (diffMin <= 0) {
-        setLastSyncedTimeAgo('just now');
-      } else {
-        setLastSyncedTimeAgo(`${diffMin} min ago`);
-      }
-    };
-
-    updateTimeAgo();
-    const timeInterval = setInterval(updateTimeAgo, 30000); // update every 30 seconds
-
-    return () => clearInterval(timeInterval);
-  }, [weatherCache]);
+  // Last Synced relative time is now calculated in the Unified Next Sync and Last Synced Countdown Effect
 
   // Launch Demo Mode
   const startDemoMode = () => {
@@ -719,12 +712,12 @@ export default function App() {
       const latestTime = Math.max(...timestamps);
       const nextSync = new Date(latestTime + 15 * 60 * 1000);
       if (isNaN(nextSync.getTime())) return '';
-      return nextSync.toLocaleTimeString('en-IN', {
+      return nextSync.toLocaleTimeString('en-US', {
         hour: '2-digit',
         minute: '2-digit',
         hour12: true,
         timeZone: 'Asia/Kolkata'
-      });
+      }).toLowerCase();
     } catch (e) {
       return '';
     }
