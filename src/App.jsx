@@ -1256,7 +1256,7 @@ export default function App() {
 
                 {/* Body - 3 Line Items */}
                 <div className="card-body" style={{ padding: 0 }}>
-                  {cityItems.map((item) => (
+                  {[...cityItems].sort((a, b) => (a.state === 'active' ? -1 : 1) - (b.state === 'active' ? -1 : 1)).map((item) => (
                     <div key={item.id} className={`line-item-row ${item.state === 'active' ? `active-row active-${cond}` : ''}`}>
                       <div className="line-item-left" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                         <ImageThumbnail creativeName={item.creative_name} conditionTrigger={item.condition_trigger} />
