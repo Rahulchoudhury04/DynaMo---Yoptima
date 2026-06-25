@@ -1650,3 +1650,222 @@ a {
   0%, 100% { opacity: 0.3; }
   50% { opacity: 1; }
 }
+
+/* DynaMo Platform Modal Styles */
+.platform-modal-card {
+  background-color: #FFFFFF;
+  border-radius: 20px;
+  box-shadow: var(--shadow-lg), 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  width: 100%;
+  max-width: 900px;
+  max-height: 85vh;
+  padding: 32px;
+  position: relative;
+  animation: modalScaleUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.platform-modal-body {
+  overflow-y: auto;
+  margin-top: 20px;
+  padding-right: 4px;
+}
+
+/* Scrollbar styling for body */
+.platform-modal-body::-webkit-scrollbar {
+  width: 6px;
+}
+.platform-modal-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+.platform-modal-body::-webkit-scrollbar-thumb {
+  background-color: #CBD5E1;
+  border-radius: 3px;
+}
+
+.platform-close-btn {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: #F1F5F9;
+  color: #64748B;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  z-index: 10;
+}
+
+.platform-close-btn:hover {
+  background-color: #E2E8F0;
+  color: #1E293B;
+  transform: scale(1.05);
+}
+
+.platform-header {
+  padding-right: 40px;
+}
+
+.platform-title {
+  font-size: 24px;
+  font-weight: 800;
+  color: #2D2D8F;
+  margin-bottom: 6px;
+  letter-spacing: -0.02em;
+}
+
+.platform-subtitle {
+  font-size: 14px;
+  color: #64748B;
+  line-height: 1.5;
+}
+
+.platform-status-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+  font-size: 13px;
+  color: #475569;
+  font-weight: 500;
+}
+
+.platform-divider {
+  height: 1px;
+  background-color: #E2E8F0;
+  margin: 16px 0 24px 0;
+  width: 100%;
+}
+
+.platform-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  padding-bottom: 24px;
+}
+
+.platform-card {
+  background-color: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 180px;
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s ease;
+  position: relative;
+}
+
+.platform-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
+  border-color: #CBD5E1;
+}
+
+.platform-card-icon-wrapper {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #EEF2F6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  margin-bottom: 12px;
+}
+
+.platform-card-icon-wrapper.icon-purple {
+  background-color: #F5F3FF;
+}
+
+.platform-card-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1E293B;
+  margin-bottom: 6px;
+}
+
+.platform-card-desc {
+  font-size: 13px;
+  color: #64748B;
+  line-height: 1.5;
+  margin-bottom: 16px;
+  flex-grow: 1;
+}
+
+.platform-card-footer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  width: 100%;
+}
+
+.badge-coming-soon {
+  background-color: #EEF2F6;
+  color: #1E1B4B;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 9999px;
+  letter-spacing: 0.02em;
+}
+
+.badge-live-green {
+  background-color: #ECFDF5;
+  color: #059669;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 9999px;
+  letter-spacing: 0.02em;
+}
+
+.platform-modal-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 16px;
+  border-top: 1px solid #E2E8F0;
+  margin-top: auto;
+  font-size: 13px;
+  color: #64748B;
+}
+
+.feedback-link {
+  color: #2D2D8F;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.feedback-link:hover {
+  color: #1E1E66;
+  text-decoration: underline;
+}
+
+@media (max-width: 868px) {
+  .platform-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 580px) {
+  .platform-grid {
+    grid-template-columns: 1fr;
+  }
+  .platform-modal-card {
+    padding: 24px;
+  }
+}

@@ -1225,24 +1225,113 @@ export default function App() {
 
       {/* New Campaign Modal */}
       {isNewCampaignOpen && (
-        <div className="modal-overlay">
-          <div className="modal-card">
-            <button className="modal-close" onClick={() => setIsNewCampaignOpen(false)}>
-              <X size={14} />
+        <div className="modal-overlay" onClick={() => setIsNewCampaignOpen(false)}>
+          <div className="platform-modal-card" onClick={(e) => e.stopPropagation()}>
+            <button className="platform-close-btn" onClick={() => setIsNewCampaignOpen(false)} aria-label="Close modal">
+              <X size={18} />
             </button>
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '1rem' }}>
-              <div className="modal-illustration">
-                <Rocket size={48} style={{ color: '#2D2D8F' }} />
-              </div>
-              <h2 className="modal-title" style={{ fontSize: '20px', fontWeight: 700, margin: 0 }}>
-                Coming Soon
-              </h2>
-              <p className="modal-desc" style={{ color: 'var(--text-muted)', fontSize: '14px', lineHeight: '1.5', margin: '0 0 1rem 0' }}>
-                This feature is coming soon. DynaMo will support multiple brand campaigns and automated custom triggers in the next release.
+            
+            <div className="platform-header">
+              <h2 className="platform-title">DynaMo Platform</h2>
+              <p className="platform-subtitle">
+                Everything your campaign stack needs — built for real-time, context-aware advertising
               </p>
-              <button className="btn-notify-me" onClick={() => { alert('Thank you! We will notify you when this feature launches.'); setIsNewCampaignOpen(false); }}>
-                Notify me
-              </button>
+              <div className="platform-status-bar">
+                <span>Weather Triggers</span>
+                <span className="badge-live-green">Live</span>
+              </div>
+            </div>
+            
+            <div className="platform-divider"></div>
+            
+            <div className="platform-modal-body">
+              <div className="platform-grid">
+                {[
+                  {
+                    icon: '📋',
+                    title: 'Campaign Builder',
+                    description: 'Launch a new brand campaign with custom creatives, cities, triggers and budgets. Multi-brand support with isolated workspaces.',
+                    badge: 'Coming Soon',
+                    type: 'coming-soon'
+                  },
+                  {
+                    icon: '⚡',
+                    title: 'Trigger Builder',
+                    description: 'Build any trigger rule without code — weather, cricket scores, AQI, Nifty movements, traffic congestion, time of day.',
+                    badge: 'Coming Soon',
+                    type: 'coming-soon'
+                  },
+                  {
+                    icon: '💰',
+                    title: 'Budget Manager',
+                    description: 'Set daily spend caps per line item, auto-pause at limits, pace budgets across dayparts, get alerts at 80% spend.',
+                    badge: 'Coming Soon',
+                    type: 'coming-soon'
+                  },
+                  {
+                    icon: '🎛',
+                    title: 'Manual Override',
+                    description: 'Force activate or pause any line item instantly. Add a reason, set an expiry time. Full audit trail maintained.',
+                    badge: 'Coming Soon',
+                    type: 'coming-soon'
+                  },
+                  {
+                    icon: '🔔',
+                    title: 'Alert Center',
+                    description: 'WhatsApp and email alerts when conditions change, budgets hit limits, APIs fail, or creatives have been paused too long.',
+                    badge: 'Coming Soon',
+                    type: 'coming-soon'
+                  },
+                  {
+                    icon: '📊',
+                    title: 'Analytics',
+                    description: 'How long each creative ran, condition frequency per city, impression estimates, cost per condition, campaign ROI.',
+                    badge: 'Coming Soon',
+                    type: 'coming-soon'
+                  },
+                  {
+                    icon: '🎨',
+                    title: 'Creative Library',
+                    description: 'Upload and manage ad creatives directly in DynaMo. Tag each creative with trigger conditions. Preview before going live.',
+                    badge: 'Coming Soon',
+                    type: 'coming-soon'
+                  },
+                  {
+                    icon: '👥',
+                    title: 'Team Access',
+                    description: 'Invite team members with role-based permissions. CMO gets read-only view. Campaign managers get edit access. Full SSO support.',
+                    badge: 'Coming Soon',
+                    type: 'coming-soon'
+                  },
+                  {
+                    icon: '🔗',
+                    title: 'API & Webhooks',
+                    description: 'Connect DynaMo to Google Ads, Meta, DV360. Push state changes via webhooks to your existing ad stack in real time.',
+                    badge: 'Coming Soon',
+                    type: 'coming-soon'
+                  }
+                ].map((card, idx) => (
+                  <div key={idx} className="platform-card">
+                    <div>
+                      <div className="platform-card-icon-wrapper icon-purple">
+                        {card.icon}
+                      </div>
+                      <h3 className="platform-card-title">{card.title}</h3>
+                      <p className="platform-card-desc">{card.description}</p>
+                    </div>
+                    <div className="platform-card-footer">
+                      <span className="badge-coming-soon">{card.badge}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            
+            <div className="platform-modal-footer">
+              <span>Have a feature request?</span>
+              <a href="#" className="feedback-link" onClick={(e) => { e.preventDefault(); alert('Feedback workspace coming soon!'); }}>
+                Share feedback →
+              </a>
             </div>
           </div>
         </div>
