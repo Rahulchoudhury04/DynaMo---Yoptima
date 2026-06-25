@@ -258,57 +258,14 @@ export default function App() {
   const [showToast, setShowToast] = useState(false);
   const [isNotificationDropdownOpen, setIsNotificationDropdownOpen] = useState(false);
   const [showAllLogs, setShowAllLogs] = useState(false);
-  const [lastSyncedTimeAgo, setLastSyncedTimeAgo] = useState('never');
   const [lastOpenedNotificationsAt, setLastOpenedNotificationsAt] = useState(0);
-  
-  // Next sync countdown state
-  const [nextSyncMs, setNextSyncMs] = useState(15 * 60 * 1000); // 15 mins default
 
   // Campaign Analytics State
   const [analyticsPeriod, setAnalyticsPeriod] = useState('7d'); // '7d', '30d', 'all'
   const [isExporting, setIsExporting] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
 
-  // Unified Next Sync and Last Synced Countdown Effect
-  useEffect(() => {
-    if (weatherCache.length === 0) {
-      setLastSyncedTimeAgo('never');
-      if (isRefreshing) setNextSyncMs(0);
-      return;
-    }
-    
-    const updateTimers = () => {
-      const timestamps = weatherCache.map(w => w && w.fetched_at ? new Date(w.fetched_at).getTime() : NaN).filter(t => !isNaN(t));
-      if (timestamps.length === 0) return;
-      const latestTime = Math.max(...timestamps);
-      const now = Date.now();
-      
-      const elapsedMs = now - latestTime;
-      const remainingMs = (15 * 60 * 1000) - elapsedMs;
-      
-      // Update Last Synced elapsed time
-      const elapsedSec = Math.floor(elapsedMs / 1000);
-      if (elapsedSec < 0) {
-        setLastSyncedTimeAgo('just now');
-      } else {
-        const m = Math.floor(elapsedSec / 60);
-        const s = elapsedSec % 60;
-        setLastSyncedTimeAgo(`${m} min ${s} sec ago`);
-      }
-      
-      // Update Next Sync remaining time
-      if (isRefreshing) {
-        setNextSyncMs(0);
-      } else {
-        setNextSyncMs(remainingMs > 0 ? remainingMs : 0);
-      }
-    };
 
-    updateTimers();
-    const interval = setInterval(updateTimers, 1000);
-    
-    return () => clearInterval(interval);
-  }, [weatherCache, isRefreshing]);
   
   // Error/loading states
   const [isInitialized, setIsInitialized] = useState(false);
@@ -692,12 +649,12 @@ export default function App() {
       const latestTime = Math.max(...timestamps);
       const date = new Date(latestTime);
       if (isNaN(date.getTime())) return 'never';
-      return date.toLocaleTimeString('en-IN', {
+      return date.toLocaleTimeString('en-US', {
         hour: '2-digit',
         minute: '2-digit',
         hour12: true,
         timeZone: 'Asia/Kolkata'
-      });
+      }).toUpperCase();
     } catch (e) {
       console.error("Error formatting sync time:", e);
       return 'unknown';
@@ -717,18 +674,10 @@ export default function App() {
         minute: '2-digit',
         hour12: true,
         timeZone: 'Asia/Kolkata'
-      }).toLowerCase();
+      }).toUpperCase();
     } catch (e) {
       return '';
     }
-  };
-
-  const formatCountdown = (ms) => {
-    if (ms <= 0) return "Syncing...";
-    const totalSeconds = Math.floor(ms / 1000);
-    const m = Math.floor(totalSeconds / 60);
-    const s = totalSeconds % 60;
-    return `in ${m} min ${s} sec`;
   };
 
   const formatNotificationTimeAgo = (isoString) => {
@@ -1375,14 +1324,13 @@ export default function App() {
             <div className="stat-left">
               <span className="stat-label">Last synced</span>
               <div className="stat-value-container">
-                <span className="stat-value success-text">{lastSyncedTimeAgo}</span>
-                <span className="pulse-dot" title="Live monitoring active"></span>
-              </div>
-              {weatherCache.length > 0 && (
-                <span className="stat-exact-time">
-                  Last synced at {getExactLastSyncedTime()}
+                <span className="stat-value success-text">
+                  {weatherCache.length > 0 ? getExactLastSyncedTime() : 'never'}
                 </span>
-              )}
+              </div>
+              <span className="stat-exact-time">
+                Last synced today
+              </span>
             </div>
             <div className="stat-icon-monochrome">
               <Clock size={22} />
@@ -1393,19 +1341,18 @@ export default function App() {
             <div className="stat-left">
               <span className="stat-label">Next Sync</span>
               <div className="stat-value-container">
-                {isRefreshing || nextSyncMs <= 0 ? (
+                {isRefreshing ? (
                   <span className="stat-value success-text">
                     Syncing...
                   </span>
                 ) : (
                   <span className="stat-value success-text">
-                    {formatCountdown(nextSyncMs)}
+                    {weatherCache.length > 0 ? getExactNextSyncTime() : '--:--'}
                   </span>
                 )}
-                {(isRefreshing || nextSyncMs <= 0) && <span className="pulse-dot" title="Sync in progress"></span>}
               </div>
               <span className="stat-exact-time">
-                {weatherCache.length > 0 ? `Next sync at ${getExactNextSyncTime()}` : 'Automated weather cycle'}
+                Auto weather cycle
               </span>
             </div>
             <div className="stat-icon-monochrome">
