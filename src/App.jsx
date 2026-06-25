@@ -30,7 +30,8 @@ import {
   Cloud,
   Info,
   PlayCircle,
-  Menu
+  Menu,
+  ArrowRightLeft
 } from 'lucide-react';
 
 function getHeaderBgColor(condition, isDay) {
@@ -1158,11 +1159,11 @@ export default function App() {
               <span className="stat-value">{changesTodayCount}</span>
             </div>
             <div className="stat-icon-monochrome">
-              <RefreshCw size={22} />
+              <ArrowRightLeft size={22} />
             </div>
           </div>
 
-          <div className="stat-card">
+          <div className="stat-card" style={{ alignItems: 'flex-start' }}>
             <div className="stat-left">
               <span className="stat-label">Last synced</span>
               <div className="stat-value-container">
@@ -1175,16 +1176,14 @@ export default function App() {
                 </span>
               )}
             </div>
-            <div className="stat-right-action" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', justifyContent: 'flex-end', height: '100%' }}>
-              <button 
-                className={`btn-refresh-stat ${isRefreshing ? 'spinning' : ''}`} 
-                onClick={handleManualRefresh}
-                title="Refresh weather data now"
-                disabled={isRefreshing}
-              >
-                <RefreshCw size={16} />
-              </button>
-            </div>
+            <button 
+              className={`btn-refresh-stat ${isRefreshing ? 'spinning' : ''}`} 
+              onClick={handleManualRefresh}
+              title="Refresh weather data now"
+              disabled={isRefreshing}
+            >
+              <RefreshCw size={16} />
+            </button>
           </div>
         </section>
 

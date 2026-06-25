@@ -639,7 +639,7 @@ a {
   height: 32px;
   border-radius: 50%;
   border: none;
-  background-color: #22C55E;
+  background-color: #2563EB;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -649,7 +649,7 @@ a {
 }
 
 .btn-refresh-stat:hover {
-  background-color: #16A34A;
+  background-color: #1D4ED8;
 }
 
 .btn-refresh-stat.spinning svg {
