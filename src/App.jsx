@@ -1534,7 +1534,7 @@ export default function App() {
               <h2 className="activity-title" style={{ margin: 0 }}>Campaign Analytics</h2>
               
               <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
-                <div className="filter-pills-group" style={{ display: 'flex', background: 'var(--bg-secondary)', padding: '4px', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
+                <div className="tabs-container" style={{ width: 'auto', padding: '4px' }}>
                   {['7d', '30d', 'all'].map(period => {
                     const labels = { '7d': '7 Days', '30d': '30 Days', 'all': 'All Time' };
                     const isActive = analyticsPeriod === period;
@@ -1542,18 +1542,8 @@ export default function App() {
                       <button
                         key={period}
                         onClick={() => setAnalyticsPeriod(period)}
-                        style={{
-                          padding: '6px 16px',
-                          borderRadius: '6px',
-                          border: 'none',
-                          fontSize: '13px',
-                          fontWeight: 600,
-                          cursor: 'pointer',
-                          background: isActive ? 'var(--bg-primary)' : 'transparent',
-                          color: isActive ? 'var(--text-primary)' : 'var(--text-muted)',
-                          boxShadow: isActive ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
-                          transition: 'all 0.2s'
-                        }}
+                        className={`tab-button ${isActive ? 'active' : ''}`}
+                        style={{ padding: '6px 16px' }}
                       >
                         {labels[period]}
                       </button>
@@ -1571,9 +1561,9 @@ export default function App() {
                     gap: '8px',
                     padding: '8px 16px',
                     borderRadius: '8px',
-                    border: '1px solid var(--border-color)',
-                    background: 'var(--bg-primary)',
-                    color: 'var(--text-primary)',
+                    border: '1px solid var(--stat-card-border)',
+                    background: 'var(--stat-card-bg)',
+                    color: 'var(--primary-navy)',
                     fontSize: '13px',
                     fontWeight: 600,
                     cursor: isExporting ? 'not-allowed' : 'pointer',

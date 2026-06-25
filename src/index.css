@@ -3088,12 +3088,13 @@ a {
 }
 
 .analytics-card {
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-color);
+  background-color: var(--stat-card-bg);
+  border: 1px solid var(--stat-card-border);
   border-radius: 12px;
-  padding: 20px;
+  padding: 20px 24px;
   display: flex;
   flex-direction: column;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
 }
 
 .chart-span-2 {
