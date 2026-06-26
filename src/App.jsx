@@ -1497,7 +1497,7 @@ export default function App() {
               <div className="activity-footer-divider"></div>
               <div className="activity-footer">
                 <span className="footer-text">
-                  Showing {Math.min(showAllLogs ? filteredLogs.length : 8, filteredLogs.length)} of {filteredLogs.length} total events
+                  Showing {Math.min(showAllLogs ? filteredLogs.length : 8, filteredLogs.length)} of {filteredLogs.length} total activity
                 </span>
                 {!showAllLogs && filteredLogs.length > 8 && (
                   <button className="btn-load-more" onClick={() => setShowAllLogs(true)}>
