@@ -1015,6 +1015,14 @@ a {
   text-decoration: underline;
 }
 
+.view-all-link.filter-active {
+  color: #FFFFFF;
+  background-color: #2563EB;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  text-decoration: none;
+}
+
 .header-divider {
   height: 1px;
   background-color: #F3F4F6;

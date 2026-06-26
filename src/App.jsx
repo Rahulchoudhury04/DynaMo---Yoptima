@@ -259,6 +259,7 @@ export default function App() {
   const [showToast, setShowToast] = useState(false);
   const [isNotificationDropdownOpen, setIsNotificationDropdownOpen] = useState(false);
   const [showAllLogs, setShowAllLogs] = useState(false);
+  const [showChangesOnly, setShowChangesOnly] = useState(false);
   const [lastOpenedNotificationsAt, setLastOpenedNotificationsAt] = useState(0);
 
   // Campaign Analytics State
@@ -846,6 +847,11 @@ export default function App() {
   const filteredLogs = activeTab === 'All Cities'
     ? todayLogs
     : todayLogs.filter(log => log.city === activeTab);
+
+  // When 'See Ad Changes' is active, filter to only actual creative changes
+  const displayedLogs = showChangesOnly
+    ? filteredLogs.filter(log => !log.reason || !log.reason.startsWith('No change'))
+    : filteredLogs;
 
   // Compute stat card metrics
   const activeLineItemsCount = lineItems.filter(item => item.state === 'active').length;
@@ -1449,9 +1455,19 @@ export default function App() {
           <div className="activity-header" style={{ padding: '20px 24px 12px 24px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
               <h2 className="activity-title">Today's Activity</h2>
-              <button className="view-all-link" onClick={() => setShowAllLogs(!showAllLogs)} style={{ fontSize: '14px', fontWeight: 600, color: '#2563EB', cursor: 'pointer' }}>
-                <span>{showAllLogs ? 'Show Less' : `View All (Today) →`}</span>
-              </button>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <button
+                  className={`view-all-link ${showChangesOnly ? 'filter-active' : ''}`}
+                  onClick={() => { setShowChangesOnly(!showChangesOnly); setShowAllLogs(false); }}
+                  style={{ fontSize: '13px', fontWeight: 600, cursor: 'pointer' }}
+                >
+                  <ArrowRightLeft size={14} />
+                  <span>{showChangesOnly ? 'Show All' : 'See Ad Changes'}</span>
+                </button>
+                <button className="view-all-link" onClick={() => setShowAllLogs(!showAllLogs)} style={{ fontSize: '14px', fontWeight: 600, color: '#2563EB', cursor: 'pointer' }}>
+                  <span>{showAllLogs ? 'Show Less' : `View All (Today) →`}</span>
+                </button>
+              </div>
             </div>
             <div style={{ fontSize: '13px', color: '#6B7280', margin: 0 }}>
               Live updates via Open-Meteo
@@ -1459,13 +1475,13 @@ export default function App() {
           </div>
           
           <div className="activity-list">
-            {filteredLogs.length === 0 ? (
+            {displayedLogs.length === 0 ? (
               <div className="activity-empty-state">
                 <Clock size={16} className="empty-icon" />
-                <span>No activity yet today</span>
+                <span>{showChangesOnly ? 'No ad changes today' : 'No activity yet today'}</span>
               </div>
             ) : (
-              (showAllLogs ? filteredLogs : filteredLogs.slice(0, 8)).map((log) => (
+              (showAllLogs ? displayedLogs : displayedLogs.slice(0, 8)).map((log) => (
                 <div 
                   key={log.id} 
                   className="activity-row"
@@ -1492,14 +1508,14 @@ export default function App() {
             )}
           </div>
 
-          {filteredLogs.length > 0 && (
+          {displayedLogs.length > 0 && (
             <>
               <div className="activity-footer-divider"></div>
               <div className="activity-footer">
                 <span className="footer-text">
-                  Showing {Math.min(showAllLogs ? filteredLogs.length : 8, filteredLogs.length)} of {filteredLogs.length} total activity
+                  Showing {Math.min(showAllLogs ? displayedLogs.length : 8, displayedLogs.length)} of {displayedLogs.length} total activity{showChangesOnly ? ' (changes only)' : ''}
                 </span>
-                {!showAllLogs && filteredLogs.length > 8 && (
+                {!showAllLogs && displayedLogs.length > 8 && (
                   <button className="btn-load-more" onClick={() => setShowAllLogs(true)}>
                     Load More
                   </button>
