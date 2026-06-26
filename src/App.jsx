@@ -75,8 +75,9 @@ const WEATHER_IMAGES = {
   }
 };
 
-function ImageThumbnail({ creativeName, conditionTrigger }) {
+function ImageThumbnail({ creativeName, conditionTrigger, size }) {
   const [hasError, setHasError] = useState(false);
+  const isMini = size === 'mini';
 
   const urls = {
     'Beat the Heat': 'https://ik.imagekit.io/uwe3xp8ma/DynaMo/ChatGPT%20Image%20Jun%2025,%202026,%2002_19_38%20AM.png',
@@ -95,8 +96,8 @@ function ImageThumbnail({ creativeName, conditionTrigger }) {
     const colors = placeholderColors[conditionTrigger] || placeholderColors.normal;
     const PlaceholderIcon = conditionTrigger === 'hot' ? Flame : conditionTrigger === 'rainy' ? CloudRain : Sun;
     return (
-      <div className="thumbnail-placeholder" style={{ backgroundColor: colors.bg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <PlaceholderIcon size={22} style={{ color: colors.icon, opacity: 0.7 }} />
+      <div className={`thumbnail-placeholder ${isMini ? 'thumbnail-mini' : ''}`} style={{ backgroundColor: colors.bg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <PlaceholderIcon size={isMini ? 14 : 22} style={{ color: colors.icon, opacity: 0.7 }} />
       </div>
     );
   }
@@ -105,7 +106,7 @@ function ImageThumbnail({ creativeName, conditionTrigger }) {
     <img 
       src={src} 
       alt={creativeName} 
-      className="thumbnail-img" 
+      className={`thumbnail-img ${isMini ? 'thumbnail-mini' : ''}`} 
       onError={() => setHasError(true)} 
     />
   );
@@ -1477,6 +1478,7 @@ export default function App() {
                     {renderConditionBadge(log)}
                   </div>
                   <div className="activity-creative-flow">
+                    <ImageThumbnail creativeName={log.creative_name} conditionTrigger={log.condition} size="mini" />
                     Ad running now: <strong>{log.creative_name}</strong>
                   </div>
                   <span className="activity-reason-text" title={log.reason}>

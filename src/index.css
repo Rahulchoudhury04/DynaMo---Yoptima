@@ -910,6 +910,13 @@ a {
   flex-shrink: 0;
 }
 
+.thumbnail-mini {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+
 .line-item-row:hover {
   background-color: var(--line-item-row-hover);
 }
@@ -1096,6 +1103,9 @@ a {
   text-overflow: ellipsis;
   white-space: nowrap;
   text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .activity-creative-flow strong {
